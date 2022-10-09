@@ -1,3 +1,4 @@
+CIK
 # VacationMachine
 ## 2nd Edition of Refactoring Contest
 
