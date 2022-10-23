@@ -7,13 +7,24 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove=".gitignore"/>
+		<None Remove=".gitignore" />
+		<None Update="appsettings.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
 		<Compile Update="VacationMachine.IoC\Class1.cs">
 			<Link>VacationMachine.DependencyInjection\Class1.cs</Link>
 		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\VacationMachine.IoC\VacationMachine.IoC.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
 	</ItemGroup>
 
 </Project>

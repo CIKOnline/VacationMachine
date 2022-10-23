@@ -63,7 +63,7 @@ public class IoCProviderTests
         //Arrange
         var container = new IoCContainer();
         container.RegisterSingleton<ITestInterface, TestObject>();
-        container.RegisterSingleton<SecondTestObject, SecondTestObject>();
+        container.RegisterSingleton<SecondTestObject>();
         IoCProvider provider = container.BuildProvider();
         //Act
         var returnedObject = provider.Get<SecondTestObject>();
@@ -76,7 +76,7 @@ public class IoCProviderTests
     {
         //Arrange
         var container = new IoCContainer();
-        container.RegisterSingleton<SecondTestObject, SecondTestObject>();
+        container.RegisterSingleton<SecondTestObject>();
         IoCProvider provider = container.BuildProvider();
         //Act
         Assert.Catch(() => provider.Get<SecondTestObject>());
@@ -87,7 +87,7 @@ public class IoCProviderTests
     {
         //Arrange
         var container = new IoCContainer();
-        container.RegisterSingleton<ThirdTestObject, ThirdTestObject>();
+        container.RegisterSingleton<ThirdTestObject>();
         IoCProvider provider = container.BuildProvider();
         //Act
         Assert.Catch(() => provider.Get<ThirdTestObject>());

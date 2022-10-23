@@ -1,7 +1,9 @@
-﻿namespace VacationMachine.Database;
+﻿using VacationMachine.Database.Schema;
+
+namespace VacationMachine.Database;
 
 public interface IVacationDatabase
 {
-    object[] FindByEmployeeId(long employeeId);
-    void Save(object[] employeeData);
+    Employee FindByEmployeeId(long employeeId);
+    void Save(Employee employeeData);
 }

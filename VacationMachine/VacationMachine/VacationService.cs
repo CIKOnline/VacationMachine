@@ -1,65 +1,86 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using VacationMachine.AppSettings;
 using VacationMachine.Database;
-using VacationMachine.Email;
-using VacationMachine.Escalation;
-using VacationMachine.MessageBus;
+using VacationMachine.Database.Schema;
+using VacationMachine.Models;
+using VacationMachine.ResultHandlers;
 
 namespace VacationMachine;
 
 public class VacationService
 {
     private readonly IVacationDatabase _database;
-    private readonly IEmailSender _emailSender;
-    private readonly IEscalationManager _escalationManager;
-    private readonly IMessageBus _messageBus;
+    private readonly IEnumerable<IResultHandler> _resultHandlers;
+    private readonly VacationDaysLimitSettings _vacationDaysLimitSettings;
 
-    public VacationService(IVacationDatabase database, IMessageBus messageBus, IEmailSender emailSender,
-        IEscalationManager escalationManager)
+    public VacationService(
+        IVacationDatabase database,
+        IEnumerable<IResultHandler> resultHandlers,
+        IOptions<VacationDaysLimitSettings> options)
     {
         _database = database;
-        _messageBus = messageBus;
-        _emailSender = emailSender;
-        _escalationManager = escalationManager;
+        _resultHandlers = resultHandlers;
+        _vacationDaysLimitSettings = options.Current;
     }
 
-    public Result RequestPaidDaysOff(int days, long employeeId)
+    public Result RequestPaidDaysOff(RequestModel requestModel)
     {
-        if (days < 0) throw new ArgumentException();
+        if (requestModel.DaysToTake <= 0) throw new ArgumentException();
 
-        Result result;
-        object[] employeeData = _database.FindByEmployeeId(employeeId);
-        var employeeStatus = (string)employeeData[0];
-        var daysSoFar = (int)employeeData[1];
+        Employee employeeData = _database.FindByEmployeeId(requestModel.EmployeeId);
+        long daysTakenSoFar = employeeData.ApprovedVacationRequestsList.Sum(a => a.Days);
+        long daysLimit = GetDefaultLimitForSpecificEmployeeStatus(employeeData.Status);
+        long additionalDaysLimit = GetAdditionalLimitForSpecificEmployeeStatus(employeeData.Status);
 
-        if (daysSoFar + days > 26)
-        {
-            if (employeeStatus.Equals("PERFORMER") && daysSoFar + days < 45)
-            {
-                result = Result.Manual;
-                _escalationManager.NotifyNewPendingRequest(employeeId);
-            }
-            else
-            {
-                result = Result.Denied;
-                _emailSender.Send("next time");
-            }
-        }
-        else
-        {
-            if (employeeStatus.Equals("SLACKER"))
-            {
-                result = Result.Denied;
-                _emailSender.Send("next time");
-            }
-            else
-            {
-                employeeData[1] = daysSoFar + days;
-                result = Result.Approved;
-                _database.Save(employeeData);
-                _messageBus.SendEvent("request approved");
-            }
-        }
+        Result result = CalculateResult(daysLimit, additionalDaysLimit, requestModel.DaysToTake, daysTakenSoFar);
+        HandleResult(result, employeeData, requestModel.DaysToTake);
 
         return result;
+    }
+
+    private Result CalculateResult(long daysLimit, long additionalDaysLimit, long daysToTake, long daysTakenSoFar)
+    {
+        if (daysLimit >= daysToTake + daysTakenSoFar)
+            return Result.Approved;
+        if (daysLimit + additionalDaysLimit >= daysToTake + daysTakenSoFar)
+            return Result.Manual;
+        
+        return Result.Denied;
+    }
+
+    private void HandleResult(Result result, Employee employee, long daysToTake)
+    {
+        foreach (IResultHandler resultHandler in _resultHandlers)
+            resultHandler.Handle(result, employee, daysToTake);
+    }
+    
+    private long GetDefaultLimitForSpecificEmployeeStatus(Employee.EmployeeStatus employeeStatus)
+    {
+        return GetValueFromPropertyOrDefault(
+            _vacationDaysLimitSettings.Default,
+            employeeStatus.ToString(),
+            _vacationDaysLimitSettings.Default.Default);
+    }
+    
+    private long GetAdditionalLimitForSpecificEmployeeStatus(Employee.EmployeeStatus employeeStatus)
+    {
+        return GetValueFromPropertyOrDefault(
+            _vacationDaysLimitSettings.Additional,
+            employeeStatus.ToString(),
+            _vacationDaysLimitSettings.Additional.Default);
+    }
+
+    private T GetValueFromPropertyOrDefault<T>(object @object, string propertyName, T defaultValue)
+    {
+        Type settingsType = @object.GetType();
+        PropertyInfo specificSettingsProperty = settingsType.GetProperty(propertyName);
+        var specificSettingsValue = specificSettingsProperty?.GetValue(@object);
+        if (specificSettingsValue is null)
+            return defaultValue;
+
+        return (T)specificSettingsValue;
     }
 }

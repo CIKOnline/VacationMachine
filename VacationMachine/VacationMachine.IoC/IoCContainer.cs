@@ -6,7 +6,17 @@ public class IoCContainer
 {
     private readonly Dictionary<Type, Type> _implementationMappings = new();
     private readonly Dictionary<Type, DependencyType> _resolvingStrategy = new();
-
+    
+    public void RegisterSingleton<TImplementation>()
+    {
+        RegisterSingleton<TImplementation, TImplementation>();
+    }
+    
+    public void RegisterTransient<TImplementation>()
+    {
+        RegisterTransient<TImplementation, TImplementation>();
+    }
+    
     public void RegisterSingleton<TInterface, TImplementation>() where TImplementation : TInterface
     {
         _resolvingStrategy.Add(typeof(TInterface), DependencyType.Singleton);

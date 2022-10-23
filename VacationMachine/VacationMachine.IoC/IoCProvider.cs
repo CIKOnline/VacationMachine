@@ -26,6 +26,9 @@ public class IoCProvider
 
     private object Get(Type type, List<Type> blockedTypes)
     {
+        if (type == GetType())
+            return this;
+        
         if (blockedTypes.Contains(type))
             throw new Exception("Circular dependency was detected");
 

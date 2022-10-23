@@ -1,13 +1,19 @@
-﻿namespace VacationMachine.Database;
+﻿using System.Collections.Generic;
+using VacationMachine.Database.Schema;
+
+namespace VacationMachine.Database;
 
 public class VacationDatabase : IVacationDatabase
 {
-    public object[] FindByEmployeeId(long employeeId)
+    private readonly Dictionary<long, Employee> _employees = new();
+
+    public Employee FindByEmployeeId(long employeeId)
     {
-        return new object[] { "SLACKER", 1 };
+        return _employees[employeeId];
     }
 
-    public void Save(object[] employeeData)
+    public void Save(Employee employeeData)
     {
+        _employees[employeeData.EmployeeId] = employeeData;
     }
 }
