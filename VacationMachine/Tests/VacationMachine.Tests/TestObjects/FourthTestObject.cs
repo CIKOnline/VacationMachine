@@ -1,4 +1,4 @@
-namespace VacationMachine.IoC.Tests.TestObjects;
+namespace VacationMachine.Tests.TestObjects;
 
 public class FourthTestObject
 {

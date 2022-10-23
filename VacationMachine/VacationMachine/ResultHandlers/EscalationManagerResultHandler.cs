@@ -3,11 +3,11 @@ using VacationMachine.Escalation;
 
 namespace VacationMachine.ResultHandlers;
 
-public class EscalationManagerHandler : IResultHandler
+public class EscalationManagerResultHandler : IResultHandler
 {
     private readonly IEscalationManager _escalationManager;
 
-    public EscalationManagerHandler(IEscalationManager escalationManager)
+    public EscalationManagerResultHandler(IEscalationManager escalationManager)
     {
         _escalationManager = escalationManager;
     }

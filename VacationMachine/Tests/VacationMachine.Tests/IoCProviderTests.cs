@@ -1,4 +1,6 @@
-namespace VacationMachine.IoC.Tests;
+using VacationMachine.Tests.TestObjects;
+
+namespace VacationMachine.Tests;
 
 public class IoCProviderTests
 {

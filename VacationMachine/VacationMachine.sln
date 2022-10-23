@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationMachine.IoC", "Vaca
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{720348A4-A063-44DC-AED0-9028571903CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationMachine.IoC.Tests", "Tests\VacationMachine.IoC.Tests\VacationMachine.IoC.Tests.csproj", "{83827C42-288E-4EFA-84A2-9BA82E6298DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationMachine.Tests", "Tests\VacationMachine.Tests\VacationMachine.Tests.csproj", "{83827C42-288E-4EFA-84A2-9BA82E6298DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

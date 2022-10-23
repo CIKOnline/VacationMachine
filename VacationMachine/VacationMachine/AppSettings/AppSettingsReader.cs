@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace VacationMachine.AppSettings;
 
-public class AppSettingsReader
+public class AppSettingsReader : IAppSettingsReader
 {
     private const string DefaultAppSettingsFileName = "appsettings.json";
     private readonly object _readLock = new();

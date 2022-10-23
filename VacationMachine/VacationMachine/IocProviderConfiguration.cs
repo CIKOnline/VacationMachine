@@ -13,12 +13,12 @@ public static class IocProviderConfiguration
     public static IoCContainer Configure()
     {
         IoCContainer ioCContainer = new();
-        ioCContainer.RegisterSingleton<AppSettingsReader>();
+        ioCContainer.RegisterSingleton<IAppSettingsReader, AppSettingsReader>();
         ioCContainer.RegisterTransient<IOptions<VacationDaysLimitSettings>, GenericOptions<VacationDaysLimitSettings>>();
         ioCContainer.RegisterTransient<IOptions<MessageBusMessageSettings>, GenericOptions<MessageBusMessageSettings>>();
         ioCContainer.RegisterTransient<IOptions<EmailMessageSetting>, GenericOptions<EmailMessageSetting>>();
 
-        ioCContainer.RegisterTransient<IResultHandler, EscalationManagerHandler>();
+        ioCContainer.RegisterTransient<IResultHandler, EscalationManagerResultHandler>();
         ioCContainer.RegisterTransient<IResultHandler, MessageBusResultHandler>();
         ioCContainer.RegisterTransient<IResultHandler, SendEmailResultResultHandler>();
         ioCContainer.RegisterTransient<IResultHandler, UpdateDataInDatabaseResultHandler>();
