@@ -21,7 +21,12 @@ public class IoCProvider
     public T Get<T>()
     {
         Type type = typeof(T);
-        return (T)Get(type, new List<Type>());
+        return (T)Get(type);
+    }
+
+    public object Get(Type type)
+    {
+        return Get(type, new List<Type>());
     }
 
     private object Get(Type type, List<Type> blockedTypes)

@@ -8,12 +8,12 @@ public class VacationDaysLimitSettings
     public class DefaultValues
     {
         public long Default { get; init; }
-        public long Slackers { get; init; }
+        public long Slacker { get; init; }
     }
     
     public class AdditionalValues
     {
         public long Default { get; init; }
-        public long Performers { get; init; }
+        public long Performer { get; init; }
     }
 }

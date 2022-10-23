@@ -20,7 +20,7 @@ public class SendEmailResultResultHandler : IResultHandler
         var message =
             _emailOptions.Current.GetType()
                 .GetProperty(result.ToString())
-                ?.GetValue(result) as string;
+                ?.GetValue(_emailOptions.Current) as string;
         
         if(message is not null)
             _emailSender.Send(message);

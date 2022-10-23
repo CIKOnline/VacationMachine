@@ -19,7 +19,7 @@ public class MessageBusResultHandler : IResultHandler
         var message =
             _messageBusMessageSettings.Current.GetType()
                 .GetProperty(result.ToString())
-                ?.GetValue(result) as string;
+                ?.GetValue(_messageBusMessageSettings.Current) as string;
         
         if(message is not null)
             _messageBus.SendEvent(message);
