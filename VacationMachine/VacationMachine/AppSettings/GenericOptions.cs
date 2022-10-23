@@ -6,5 +6,6 @@ public class GenericOptions<T> : IOptions<T>
     {
         Current = appSettingsReader.Read<T>();
     }
+
     public T Current { get; }
 }

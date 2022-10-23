@@ -11,7 +11,7 @@ public class EscalationManagerHandler : IResultHandler
     {
         _escalationManager = escalationManager;
     }
-    
+
     public void Handle(Result result, Employee employee, long daysToTake)
     {
         if (result == Result.Manual)

@@ -14,14 +14,14 @@ public class MessageBusResultHandler : IResultHandler
         _messageBus = messageBus;
         _messageBusMessageSettings = messageBusMessageSettings;
     }
+
     public void Handle(Result result, Employee employee, long daysToTake)
     {
-        var message =
-            _messageBusMessageSettings.Current.GetType()
-                .GetProperty(result.ToString())
-                ?.GetValue(_messageBusMessageSettings.Current) as string;
-        
-        if(message is not null)
+        var message = _messageBusMessageSettings.Current.GetType()
+            .GetProperty(result.ToString())
+            ?.GetValue(_messageBusMessageSettings.Current) as string;
+
+        if (message is not null)
             _messageBus.SendEvent(message);
     }
 }

@@ -47,7 +47,7 @@ public class VacationService
             return Result.Approved;
         if (daysLimit + additionalDaysLimit >= daysToTake + daysTakenSoFar)
             return Result.Manual;
-        
+
         return Result.Denied;
     }
 
@@ -56,7 +56,7 @@ public class VacationService
         foreach (IResultHandler resultHandler in _resultHandlers)
             resultHandler.Handle(result, employee, daysToTake);
     }
-    
+
     private long GetDefaultLimitForSpecificEmployeeStatus(Employee.EmployeeStatus employeeStatus)
     {
         return GetValueFromPropertyOrDefault(
@@ -64,7 +64,7 @@ public class VacationService
             employeeStatus.ToString(),
             _vacationDaysLimitSettings.Default.Default);
     }
-    
+
     private long GetAdditionalLimitForSpecificEmployeeStatus(Employee.EmployeeStatus employeeStatus)
     {
         return GetValueFromPropertyOrDefault(
@@ -77,7 +77,7 @@ public class VacationService
     {
         Type settingsType = @object.GetType();
         PropertyInfo specificSettingsProperty = settingsType.GetProperty(propertyName);
-        var specificSettingsValue = specificSettingsProperty?.GetValue(@object);
+        object specificSettingsValue = specificSettingsProperty?.GetValue(@object);
         if (specificSettingsValue is null)
             return defaultValue;
 

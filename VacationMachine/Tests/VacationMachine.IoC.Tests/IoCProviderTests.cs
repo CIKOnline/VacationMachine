@@ -92,7 +92,7 @@ public class IoCProviderTests
         //Act
         Assert.Catch(() => provider.Get<ThirdTestObject>());
     }
-    
+
     [Test]
     public void When_ConstructorHasTypedIEnumerable_Then_ItIsSolvedCorrectly()
     {

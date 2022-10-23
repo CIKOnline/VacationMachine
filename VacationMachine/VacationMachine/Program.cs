@@ -13,7 +13,8 @@ namespace VacationMachine;
 
 public class Program
 {
-    static IoCProvider _ioCProvider = null!;
+    private static IoCProvider _ioCProvider = null!;
+
     private static void Main(string[] args)
     {
         Configure();
@@ -40,20 +41,19 @@ public class Program
         ioCContainer.RegisterTransient<IResultHandler, MessageBusResultHandler>();
         ioCContainer.RegisterTransient<IResultHandler, SendEmailResultResultHandler>();
         ioCContainer.RegisterTransient<IResultHandler, UpdateDataInDatabaseResultHandler>();
-        
+
         ioCContainer.RegisterSingleton<IVacationDatabase, VacationDatabase>();
         ioCContainer.RegisterTransient<IEmailSender, EmailSender>();
         ioCContainer.RegisterTransient<IEscalationManager, EscalationManager>();
         ioCContainer.RegisterTransient<IMessageBus, MessageBus.MessageBus>();
         ioCContainer.RegisterTransient<VacationService>();
-        
+
         _ioCProvider = ioCContainer.BuildProvider();
 
         _ioCProvider.Get<IVacationDatabase>().Save(new Employee
         {
             Status = Employee.EmployeeStatus.Regular,
-            EmployeeId = 1,
+            EmployeeId = 1
         });
-
     }
 }

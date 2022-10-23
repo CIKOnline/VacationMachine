@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using VacationMachine.IoC.Enums;
 
@@ -21,7 +20,7 @@ public class IoCProvider
         Type type = typeof(T);
         return (T)Get(type);
     }
-    
+
     public IEnumerable<T> GetAll<T>()
     {
         Type type = typeof(T);
@@ -32,7 +31,7 @@ public class IoCProvider
     {
         return Get(type, new List<Type>()).First();
     }
-    
+
     public IEnumerable<object> GetAll(Type type)
     {
         return Get(type, new List<Type>());
@@ -43,6 +42,7 @@ public class IoCProvider
         if (type == GetType())
         {
             yield return this;
+
             yield break;
         }
 
@@ -56,15 +56,15 @@ public class IoCProvider
             if (implementationInstruction.DependencyType == DependencyType.Singleton &&
                 implementationInstruction.Cached is not null)
                 yield return implementationInstruction.Cached;
-            
+
             blockedTypes.Add(type);
 
             object resolvedObject = ResolveType(implementationInstruction.Type, blockedTypes);
             if (implementationInstruction.DependencyType == DependencyType.Singleton)
                 implementationInstruction.Cached = resolvedObject;
-            
+
             blockedTypes.Remove(type);
-            
+
             yield return resolvedObject;
         }
     }
@@ -102,7 +102,7 @@ public class IoCProvider
         ConstructorInfo constructor = GetConstructor(type);
         var parameters = constructor.GetParameters();
         List<object?> resolvedParameters = new();
-        foreach (var parameter in parameters)
+        foreach (ParameterInfo parameter in parameters)
         {
             Type typeToResolve;
             if (IsIEnumerableOfT(parameter.ParameterType))
@@ -113,10 +113,10 @@ public class IoCProvider
                 Type listType = typeof(List<>);
                 Type concreteType = listType.MakeGenericType(typeToResolve);
                 var list = (IList)Activator.CreateInstance(concreteType)!;
-                
+
                 foreach (object resolvedType in resolvedTypes)
                     list.Add(resolvedType);
-                
+
                 resolvedParameters.Add(list);
             }
 
@@ -126,10 +126,10 @@ public class IoCProvider
                 resolvedParameters.Add(Get(typeToResolve, blockedTypes).First());
             }
         }
-        
+
         return constructor.Invoke(resolvedParameters.ToArray());
     }
-    
+
     private static bool IsIEnumerableOfT(Type type)
     {
         return type.GetInterfaces()

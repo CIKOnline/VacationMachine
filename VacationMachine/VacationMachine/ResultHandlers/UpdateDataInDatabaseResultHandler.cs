@@ -11,6 +11,7 @@ public class UpdateDataInDatabaseResultHandler : IResultHandler
     {
         _vacationDatabase = vacationDatabase;
     }
+
     public void Handle(Result result, Employee employee, long daysToTake)
     {
         if (result != Result.Approved)

@@ -10,7 +10,7 @@ public class VacationDaysLimitSettings
         public long Default { get; init; }
         public long Slacker { get; init; }
     }
-    
+
     public class AdditionalValues
     {
         public long Default { get; init; }
