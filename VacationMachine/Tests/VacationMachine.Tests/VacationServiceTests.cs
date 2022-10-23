@@ -10,29 +10,30 @@ namespace VacationMachine.Tests;
 public class VacationServiceTests
 {
     private readonly IVacationDatabase _database = new VacationDatabase();
+
     private readonly VacationDaysLimitSettings _settings = new()
     {
-        Default = new()
+        Default = new VacationDaysLimitSettings.DefaultValues
         {
-          Default  = 26,
-          Slacker = 0
+            Default = 26,
+            Slacker = 0
         },
-        Additional = new()
+        Additional = new VacationDaysLimitSettings.AdditionalValues
         {
             Default = 0,
             Performer = 19
         }
     };
-    
+
     private VacationService _sut = null!;
-    
+
     [SetUp]
     public void Setup()
     {
         Mock<IOptions<VacationDaysLimitSettings>> optionsMock = new();
         optionsMock.Setup(a => a.Current)
             .Returns(_settings);
-        
+
         _sut = new VacationService(_database,
             Array.Empty<IResultHandler>(), optionsMock.Object);
     }
@@ -65,7 +66,7 @@ public class VacationServiceTests
                 }
             }
         });
-        
+
         //Act
         Result actualResult = _sut.RequestPaidDaysOff(new RequestModel { EmployeeId = 1, DaysToTake = daysRequested });
 

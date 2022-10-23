@@ -39,8 +39,8 @@ public class Program
             EmployeeId = 1,
             ApprovedVacationRequestsList = new List<ApprovedVacationRequests>
             {
-                new () { Days = 7 }
+                new() { Days = 7 }
             }
-        }); 
+        });
     }
 }
