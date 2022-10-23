@@ -1,13 +1,9 @@
 ﻿using System;
-using VacationMachine.AppSettings;
+using System.Collections.Generic;
 using VacationMachine.Database;
 using VacationMachine.Database.Schema;
-using VacationMachine.Email;
-using VacationMachine.Escalation;
 using VacationMachine.IoC;
-using VacationMachine.MessageBus;
 using VacationMachine.Models;
-using VacationMachine.ResultHandlers;
 
 namespace VacationMachine;
 
@@ -31,29 +27,19 @@ public class Program
 
     private static void Configure()
     {
-        IoCContainer ioCContainer = new();
-        ioCContainer.RegisterSingleton<AppSettingsReader>();
-        ioCContainer.RegisterTransient<IOptions<VacationDaysLimitSettings>, GenericOptions<VacationDaysLimitSettings>>();
-        ioCContainer.RegisterTransient<IOptions<MessageBusMessageSettings>, GenericOptions<MessageBusMessageSettings>>();
-        ioCContainer.RegisterTransient<IOptions<EmailMessageSetting>, GenericOptions<EmailMessageSetting>>();
+        _ioCProvider = IocProviderConfiguration.Configure().BuildProvider();
+    }
 
-        ioCContainer.RegisterTransient<IResultHandler, EscalationManagerHandler>();
-        ioCContainer.RegisterTransient<IResultHandler, MessageBusResultHandler>();
-        ioCContainer.RegisterTransient<IResultHandler, SendEmailResultResultHandler>();
-        ioCContainer.RegisterTransient<IResultHandler, UpdateDataInDatabaseResultHandler>();
-
-        ioCContainer.RegisterSingleton<IVacationDatabase, VacationDatabase>();
-        ioCContainer.RegisterTransient<IEmailSender, EmailSender>();
-        ioCContainer.RegisterTransient<IEscalationManager, EscalationManager>();
-        ioCContainer.RegisterTransient<IMessageBus, MessageBus.MessageBus>();
-        ioCContainer.RegisterTransient<VacationService>();
-
-        _ioCProvider = ioCContainer.BuildProvider();
-
+    private static void LoadData()
+    {
         _ioCProvider.Get<IVacationDatabase>().Save(new Employee
         {
             Status = Employee.EmployeeStatus.Regular,
-            EmployeeId = 1
-        });
+            EmployeeId = 1,
+            ApprovedVacationRequestsList = new List<ApprovedVacationRequests>
+            {
+                new () { Days = 7 }
+            }
+        }); 
     }
 }
