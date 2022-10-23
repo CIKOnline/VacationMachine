@@ -1,6 +1,6 @@
 namespace VacationMachine.AppSettings;
 
-public class EmailMessageSetting
+public class EmailMessageSettings
 {
     public string Approved { get; init; }
     public string Denied { get; init; }

@@ -14,13 +14,13 @@ public class VacationServiceTests
     {
         Default = new()
         {
-          Default  = 28,
+          Default  = 26,
           Slacker = 0
         },
         Additional = new()
         {
             Default = 0,
-            Performer = 18
+            Performer = 19
         }
     };
     
@@ -29,29 +29,26 @@ public class VacationServiceTests
     [SetUp]
     public void Setup()
     {
-        Mock<IAppSettingsReader> appSettingsReader = new();
-        appSettingsReader.Setup(
-                a => a.Read<VacationDaysLimitSettings>())
+        Mock<IOptions<VacationDaysLimitSettings>> optionsMock = new();
+        optionsMock.Setup(a => a.Current)
             .Returns(_settings);
-
-        var options = new GenericOptions<VacationDaysLimitSettings>(appSettingsReader.Object);
         
         _sut = new VacationService(_database,
-            Array.Empty<IResultHandler>(), options);
+            Array.Empty<IResultHandler>(), optionsMock.Object);
     }
 
     [TestCase(Employee.EmployeeStatus.Slacker, 0, 1, Result.Denied)]
-    [TestCase(Employee.EmployeeStatus.Regular, 26, 1, Result.Approved)]
-    [TestCase(Employee.EmployeeStatus.Regular, 27, 1, Result.Approved)]
-    [TestCase(Employee.EmployeeStatus.Regular, 28, 1, Result.Denied)]
-    [TestCase(Employee.EmployeeStatus.Regular, 0, 29, Result.Denied)]
-    [TestCase(Employee.EmployeeStatus.Performer, 26, 1, Result.Approved)]
-    [TestCase(Employee.EmployeeStatus.Performer, 27, 1, Result.Approved)]
-    [TestCase(Employee.EmployeeStatus.Performer, 28, 1, Result.Manual)]
-    [TestCase(Employee.EmployeeStatus.Performer, 0, 29, Result.Manual)]
-    [TestCase(Employee.EmployeeStatus.Performer, 45, 1, Result.Manual)]
-    [TestCase(Employee.EmployeeStatus.Performer, 46, 1, Result.Denied)]
-    [TestCase(Employee.EmployeeStatus.Performer, 0, 47, Result.Denied)]
+    [TestCase(Employee.EmployeeStatus.Regular, 24, 1, Result.Approved)]
+    [TestCase(Employee.EmployeeStatus.Regular, 25, 1, Result.Approved)]
+    [TestCase(Employee.EmployeeStatus.Regular, 26, 1, Result.Denied)]
+    [TestCase(Employee.EmployeeStatus.Regular, 0, 27, Result.Denied)]
+    [TestCase(Employee.EmployeeStatus.Performer, 24, 1, Result.Approved)]
+    [TestCase(Employee.EmployeeStatus.Performer, 25, 1, Result.Approved)]
+    [TestCase(Employee.EmployeeStatus.Performer, 26, 1, Result.Manual)]
+    [TestCase(Employee.EmployeeStatus.Performer, 0, 27, Result.Manual)]
+    [TestCase(Employee.EmployeeStatus.Performer, 44, 1, Result.Manual)]
+    [TestCase(Employee.EmployeeStatus.Performer, 45, 1, Result.Denied)]
+    [TestCase(Employee.EmployeeStatus.Performer, 0, 46, Result.Denied)]
     public void CheckExpectedResult(Employee.EmployeeStatus employeeStatus, long daysAlreadyTaken, long daysRequested,
         Result expectedResult)
     {

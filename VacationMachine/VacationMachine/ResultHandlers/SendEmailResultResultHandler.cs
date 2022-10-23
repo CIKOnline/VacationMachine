@@ -6,10 +6,10 @@ namespace VacationMachine.ResultHandlers;
 
 public class SendEmailResultResultHandler : IResultHandler
 {
-    private readonly IOptions<EmailMessageSetting> _emailOptions;
+    private readonly IOptions<EmailMessageSettings> _emailOptions;
     private readonly IEmailSender _emailSender;
 
-    public SendEmailResultResultHandler(IEmailSender emailSender, IOptions<EmailMessageSetting> emailOptions)
+    public SendEmailResultResultHandler(IEmailSender emailSender, IOptions<EmailMessageSettings> emailOptions)
     {
         _emailSender = emailSender;
         _emailOptions = emailOptions;

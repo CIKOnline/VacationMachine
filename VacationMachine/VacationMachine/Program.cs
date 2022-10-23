@@ -14,6 +14,7 @@ public class Program
     private static void Main(string[] args)
     {
         Configure();
+        LoadData();
         var vacationService = _ioCProvider.Get<VacationService>();
         Result result = vacationService.RequestPaidDaysOff(new RequestModel
         {

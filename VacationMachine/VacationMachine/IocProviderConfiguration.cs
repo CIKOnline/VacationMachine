@@ -16,7 +16,7 @@ public static class IocProviderConfiguration
         ioCContainer.RegisterSingleton<IAppSettingsReader, AppSettingsReader>();
         ioCContainer.RegisterTransient<IOptions<VacationDaysLimitSettings>, GenericOptions<VacationDaysLimitSettings>>();
         ioCContainer.RegisterTransient<IOptions<MessageBusMessageSettings>, GenericOptions<MessageBusMessageSettings>>();
-        ioCContainer.RegisterTransient<IOptions<EmailMessageSetting>, GenericOptions<EmailMessageSetting>>();
+        ioCContainer.RegisterTransient<IOptions<EmailMessageSettings>, GenericOptions<EmailMessageSettings>>();
 
         ioCContainer.RegisterTransient<IResultHandler, EscalationManagerResultHandler>();
         ioCContainer.RegisterTransient<IResultHandler, MessageBusResultHandler>();
