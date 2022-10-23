@@ -4,8 +4,7 @@ namespace VacationMachine.IoC;
 
 public class IoCContainer
 {
-    private readonly Dictionary<Type, Type> _implementationMappings = new();
-    private readonly Dictionary<Type, DependencyType> _resolvingStrategy = new();
+    private readonly List<(Type, ImplementationInstruction)> _implementationMappings = new();
     
     public void RegisterSingleton<TImplementation>()
     {
@@ -19,18 +18,26 @@ public class IoCContainer
     
     public void RegisterSingleton<TInterface, TImplementation>() where TImplementation : TInterface
     {
-        _resolvingStrategy.Add(typeof(TInterface), DependencyType.Singleton);
-        _implementationMappings.Add(typeof(TInterface), typeof(TImplementation));
+        ImplementationInstruction instruction = new()
+        {
+            Type = typeof(TImplementation),
+            DependencyType = DependencyType.Singleton
+        };
+        _implementationMappings.Add((typeof(TInterface), instruction));
     }
 
     public void RegisterTransient<TInterface, TImplementation>() where TImplementation : TInterface
     {
-        _resolvingStrategy.Add(typeof(TInterface), DependencyType.Transient);
-        _implementationMappings.Add(typeof(TInterface), typeof(TImplementation));
+        ImplementationInstruction instruction = new()
+        {
+            Type = typeof(TImplementation),
+            DependencyType = DependencyType.Transient
+        };
+        _implementationMappings.Add((typeof(TInterface), instruction));
     }
 
     public IoCProvider BuildProvider()
     {
-        return new IoCProvider(_resolvingStrategy, _implementationMappings);
+        return new IoCProvider(_implementationMappings);
     }
 }

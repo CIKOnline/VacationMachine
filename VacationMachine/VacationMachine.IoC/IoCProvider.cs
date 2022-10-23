@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using VacationMachine.IoC.Enums;
@@ -6,16 +7,13 @@ namespace VacationMachine.IoC;
 
 public class IoCProvider
 {
-    private readonly Dictionary<Type, object> _cachedTypes = new();
-    private readonly Dictionary<Type, Type> _implementationMappings;
-    private readonly Dictionary<Type, DependencyType> _resolvingStrategyDictionary;
+    private readonly ILookup<Type, ImplementationInstruction> _resolvingInstructions;
 
-    internal IoCProvider(
-        Dictionary<Type, DependencyType> resolvingStrategy,
-        Dictionary<Type, Type> implementationMappings)
+    internal IoCProvider(List<(Type, ImplementationInstruction)> implementationMappings)
     {
-        _resolvingStrategyDictionary = resolvingStrategy;
-        _implementationMappings = implementationMappings;
+        _resolvingInstructions = implementationMappings.ToLookup(
+            p => p.Item1,
+            p => p.Item2);
     }
 
     public T Get<T>()
@@ -23,38 +21,66 @@ public class IoCProvider
         Type type = typeof(T);
         return (T)Get(type);
     }
+    
+    public IEnumerable<T> GetAll<T>()
+    {
+        Type type = typeof(T);
+        return (IEnumerable<T>)GetAll(type);
+    }
 
     public object Get(Type type)
+    {
+        return Get(type, new List<Type>()).First();
+    }
+    
+    public IEnumerable<object> GetAll(Type type)
     {
         return Get(type, new List<Type>());
     }
 
-    private object Get(Type type, List<Type> blockedTypes)
+    private IEnumerable<object> Get(Type type, List<Type> blockedTypes)
     {
         if (type == GetType())
-            return this;
-        
+        {
+            yield return this;
+            yield break;
+        }
+
         if (blockedTypes.Contains(type))
             throw new Exception("Circular dependency was detected");
 
-        bool isSingleton = IsTypeRegisteredAsSingleton(type);
-        if (isSingleton && TryToGetAlreadyResolvedObject(type, out object? cachedObject))
-            return cachedObject;
+        var resolvingInstructions = GetResolvingInstructions(type);
 
-        blockedTypes.Add(type);
+        foreach (ImplementationInstruction implementationInstruction in resolvingInstructions)
+        {
+            if (implementationInstruction.DependencyType == DependencyType.Singleton &&
+                implementationInstruction.Cached is not null)
+                yield return implementationInstruction.Cached;
+            
+            blockedTypes.Add(type);
 
-        object resolvedObject = ResolveType(type, blockedTypes);
-
-        blockedTypes.Remove(type);
-        if (isSingleton)
-            AddToCache(type, resolvedObject);
-        return resolvedObject;
+            object resolvedObject = ResolveType(implementationInstruction.Type, blockedTypes);
+            if (implementationInstruction.DependencyType == DependencyType.Singleton)
+                implementationInstruction.Cached = resolvedObject;
+            
+            blockedTypes.Remove(type);
+            
+            yield return resolvedObject;
+        }
     }
 
-    private Type GetTypeToBeResolved(Type type)
+    private IEnumerable<ImplementationInstruction> GetResolvingInstructions(Type type)
     {
-        if (_implementationMappings.ContainsKey(type))
-            return _implementationMappings[type];
+        if (_resolvingInstructions.Contains(type))
+            return _resolvingInstructions[type];
+
+        if (IsIEnumerableOfT(type))
+        {
+            Type typeToResolve = type.GetGenericArguments().Single();
+            if (_resolvingInstructions.Contains(typeToResolve))
+                return _resolvingInstructions[typeToResolve];
+        }
+
 
         throw new Exception($"Type {type.Name} is not registered");
     }
@@ -73,31 +99,41 @@ public class IoCProvider
 
     private object ResolveType(Type type, List<Type> blockedTypes)
     {
-        Type target = GetTypeToBeResolved(type);
-        ConstructorInfo constructor = GetConstructor(target);
+        ConstructorInfo constructor = GetConstructor(type);
         var parameters = constructor.GetParameters();
-        return constructor.Invoke(parameters.Select(item => Get(item.ParameterType, blockedTypes)).ToArray());
-    }
-
-    private bool IsTypeRegisteredAsSingleton(Type type)
-    {
-        return _resolvingStrategyDictionary.ContainsKey(type) && _resolvingStrategyDictionary[type] == DependencyType.Singleton;
-    }
-
-    private bool TryToGetAlreadyResolvedObject(Type type, [NotNullWhen(true)] out object? output)
-    {
-        if (_cachedTypes.ContainsKey(type))
+        List<object?> resolvedParameters = new();
+        foreach (var parameter in parameters)
         {
-            output = _cachedTypes[type];
-            return true;
+            Type typeToResolve;
+            if (IsIEnumerableOfT(parameter.ParameterType))
+            {
+                //Magic
+                typeToResolve = parameter.ParameterType.GetGenericArguments().Single();
+                var resolvedTypes = Get(typeToResolve, blockedTypes);
+                Type listType = typeof(List<>);
+                Type concreteType = listType.MakeGenericType(typeToResolve);
+                var list = (IList)Activator.CreateInstance(concreteType)!;
+                
+                foreach (object resolvedType in resolvedTypes)
+                    list.Add(resolvedType);
+                
+                resolvedParameters.Add(list);
+            }
+
+            else
+            {
+                typeToResolve = parameter.ParameterType;
+                resolvedParameters.Add(Get(typeToResolve, blockedTypes).First());
+            }
         }
-
-        output = null;
-        return false;
+        
+        return constructor.Invoke(resolvedParameters.ToArray());
     }
-
-    private void AddToCache(Type type, object resolvedObject)
+    
+    private static bool IsIEnumerableOfT(Type type)
     {
-        _cachedTypes.Add(type, resolvedObject);
+        return type.GetInterfaces()
+            .Append(type)
+            .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
     }
 }

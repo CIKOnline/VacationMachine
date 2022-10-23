@@ -35,12 +35,11 @@ public class Program
         ioCContainer.RegisterTransient<IOptions<VacationDaysLimitSettings>, GenericOptions<VacationDaysLimitSettings>>();
         ioCContainer.RegisterTransient<IOptions<MessageBusMessageSettings>, GenericOptions<MessageBusMessageSettings>>();
         ioCContainer.RegisterTransient<IOptions<EmailMessageSetting>, GenericOptions<EmailMessageSetting>>();
-        
-        ioCContainer.RegisterTransient<EscalationManagerHandler>();
-        ioCContainer.RegisterTransient<MessageBusResultHandler>();
-        ioCContainer.RegisterTransient<SendEmailResultResultHandler>();
-        ioCContainer.RegisterTransient<UpdateDataInDatabaseResultHandler>();
-        ioCContainer.RegisterSingleton<IHandlerBuilder<IResultHandler>, HandlerBuilder<IResultHandler>>();
+
+        ioCContainer.RegisterTransient<IResultHandler, EscalationManagerHandler>();
+        ioCContainer.RegisterTransient<IResultHandler, MessageBusResultHandler>();
+        ioCContainer.RegisterTransient<IResultHandler, SendEmailResultResultHandler>();
+        ioCContainer.RegisterTransient<IResultHandler, UpdateDataInDatabaseResultHandler>();
         
         ioCContainer.RegisterSingleton<IVacationDatabase, VacationDatabase>();
         ioCContainer.RegisterTransient<IEmailSender, EmailSender>();
@@ -50,12 +49,6 @@ public class Program
         
         _ioCProvider = ioCContainer.BuildProvider();
 
-        _ioCProvider.Get<IHandlerBuilder<IResultHandler>>()
-            .RegisterHandler<EscalationManagerHandler>()
-            .RegisterHandler<MessageBusResultHandler>()
-            .RegisterHandler<SendEmailResultResultHandler>()
-            .RegisterHandler<UpdateDataInDatabaseResultHandler>();
-        
         _ioCProvider.Get<IVacationDatabase>().Save(new Employee
         {
             Status = Employee.EmployeeStatus.Regular,

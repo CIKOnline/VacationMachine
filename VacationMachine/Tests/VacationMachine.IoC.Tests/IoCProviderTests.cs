@@ -92,4 +92,18 @@ public class IoCProviderTests
         //Act
         Assert.Catch(() => provider.Get<ThirdTestObject>());
     }
+    
+    [Test]
+    public void When_ConstructorHasTypedIEnumerable_Then_ItIsSolvedCorrectly()
+    {
+        //Arrange
+        var container = new IoCContainer();
+        container.RegisterSingleton<ITestInterface, TestObject>();
+        container.RegisterSingleton<FourthTestObject>();
+        IoCProvider provider = container.BuildProvider();
+        //Act
+        var returnedObject = provider.Get<FourthTestObject>();
+        //Assert
+        Assert.That(returnedObject, Is.Not.Null);
+    }
 }

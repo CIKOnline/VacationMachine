@@ -13,16 +13,16 @@ namespace VacationMachine;
 public class VacationService
 {
     private readonly IVacationDatabase _database;
-    private readonly IHandlerBuilder<IResultHandler> _resultHandlerBuilder;
+    private readonly List<IResultHandler> _resultHandlers;
     private readonly VacationDaysLimitSettings _vacationDaysLimitSettings;
 
     public VacationService(
         IVacationDatabase database,
-        IHandlerBuilder<IResultHandler> resultHandlerBuilder,
+        IEnumerable<IResultHandler> resultHandlers,
         IOptions<VacationDaysLimitSettings> options)
     {
         _database = database;
-        _resultHandlerBuilder = resultHandlerBuilder;
+        _resultHandlers = resultHandlers.ToList();
         _vacationDaysLimitSettings = options.Current;
     }
 
@@ -53,8 +53,7 @@ public class VacationService
 
     private void HandleResult(Result result, Employee employee, long daysToTake)
     {
-        var handlers = _resultHandlerBuilder.Build().ToList();
-        foreach (IResultHandler resultHandler in handlers)
+        foreach (IResultHandler resultHandler in _resultHandlers)
             resultHandler.Handle(result, employee, daysToTake);
     }
     
