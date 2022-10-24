@@ -1,7 +1,7 @@
 using Moq;
-using VacationMachine.Database.Schema;
-using VacationMachine.Escalation;
-using VacationMachine.ResultHandlers;
+using ThirdPartyLibraries.Escalation;
+using VacationMachine.BusinessLogic.ResultHandlers.Concrete;
+using VacationMachine.DataAccess.DataModels;
 
 namespace VacationMachine.Tests;
 

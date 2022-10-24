@@ -1,4 +1,4 @@
-namespace VacationMachine.Database.Schema;
+namespace VacationMachine.DataAccess.DataModels;
 
 public class ApprovedVacationRequests
 {

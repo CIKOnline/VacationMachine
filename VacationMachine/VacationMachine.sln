@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{720348A4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacationMachine.Tests", "Tests\VacationMachine.Tests\VacationMachine.Tests.csproj", "{83827C42-288E-4EFA-84A2-9BA82E6298DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartyLibraries", "ThirdPartyLibraries\ThirdPartyLibraries.csproj", "{1842556F-C521-414A-BF2C-CAB489E919F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{83827C42-288E-4EFA-84A2-9BA82E6298DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83827C42-288E-4EFA-84A2-9BA82E6298DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83827C42-288E-4EFA-84A2-9BA82E6298DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1842556F-C521-414A-BF2C-CAB489E919F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1842556F-C521-414A-BF2C-CAB489E919F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1842556F-C521-414A-BF2C-CAB489E919F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1842556F-C521-414A-BF2C-CAB489E919F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

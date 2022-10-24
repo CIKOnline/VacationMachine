@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using VacationMachine.Database.Schema;
+using VacationMachine.DataAccess.DataModels;
+using VacationMachine.DataAccess.Repositories.Interfaces;
 
-namespace VacationMachine.Database;
+namespace VacationMachine.DataAccess.Repositories.Concrete;
 
-public class VacationDatabase : IVacationDatabase
+public class VacationRepository : IVacationRepository
 {
     private readonly Dictionary<long, Employee> _employees = new();
 

@@ -1,8 +1,8 @@
 using Moq;
+using ThirdPartyLibraries.MessageBus;
 using VacationMachine.AppSettings;
-using VacationMachine.Database.Schema;
-using VacationMachine.MessageBus;
-using VacationMachine.ResultHandlers;
+using VacationMachine.BusinessLogic.ResultHandlers.Concrete;
+using VacationMachine.DataAccess.DataModels;
 
 namespace VacationMachine.Tests;
 

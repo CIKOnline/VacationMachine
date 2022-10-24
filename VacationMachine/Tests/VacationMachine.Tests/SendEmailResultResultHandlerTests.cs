@@ -1,8 +1,8 @@
 using Moq;
+using ThirdPartyLibraries.Email;
 using VacationMachine.AppSettings;
-using VacationMachine.Database.Schema;
-using VacationMachine.Email;
-using VacationMachine.ResultHandlers;
+using VacationMachine.BusinessLogic.ResultHandlers.Concrete;
+using VacationMachine.DataAccess.DataModels;
 
 namespace VacationMachine.Tests;
 

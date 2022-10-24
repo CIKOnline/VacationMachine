@@ -1,10 +1,14 @@
+using ThirdPartyLibraries.Email;
+using ThirdPartyLibraries.Escalation;
+using ThirdPartyLibraries.MessageBus;
 using VacationMachine.AppSettings;
-using VacationMachine.Database;
-using VacationMachine.Email;
-using VacationMachine.Escalation;
+using VacationMachine.BusinessLogic.ResultHandlers.Concrete;
+using VacationMachine.BusinessLogic.ResultHandlers.Interfaces;
+using VacationMachine.BusinessLogic.Services.Concrete;
+using VacationMachine.BusinessLogic.Services.Interfaces;
+using VacationMachine.DataAccess.Repositories.Concrete;
+using VacationMachine.DataAccess.Repositories.Interfaces;
 using VacationMachine.IoC;
-using VacationMachine.MessageBus;
-using VacationMachine.ResultHandlers;
 
 namespace VacationMachine;
 
@@ -23,11 +27,12 @@ public static class IocProviderConfiguration
         ioCContainer.RegisterTransient<IResultHandler, SendEmailResultResultHandler>();
         ioCContainer.RegisterTransient<IResultHandler, UpdateDataInDatabaseResultHandler>();
 
-        ioCContainer.RegisterSingleton<IVacationDatabase, VacationDatabase>();
+        ioCContainer.RegisterSingleton<IVacationRepository, VacationRepository>();
+        ioCContainer.RegisterTransient<IVacationCalculator, VacationCalculator>();
         ioCContainer.RegisterTransient<IEmailSender, EmailSender>();
         ioCContainer.RegisterTransient<IEscalationManager, EscalationManager>();
-        ioCContainer.RegisterTransient<IMessageBus, MessageBus.MessageBus>();
-        ioCContainer.RegisterTransient<VacationService>();
+        ioCContainer.RegisterTransient<IMessageBus, MessageBus>();
+        ioCContainer.RegisterTransient<IVacationRequestProcessorService, VacationRequestProcessorService>();
 
         return ioCContainer;
     }

@@ -1,4 +1,4 @@
-﻿namespace VacationMachine.MessageBus;
+﻿namespace ThirdPartyLibraries.MessageBus;
 
 public interface IMessageBus
 {

@@ -1,15 +1,18 @@
 using Moq;
 using VacationMachine.AppSettings;
-using VacationMachine.Database;
-using VacationMachine.Database.Schema;
+using VacationMachine.BusinessLogic.ResultHandlers.Interfaces;
+using VacationMachine.BusinessLogic.Services.Concrete;
+using VacationMachine.DataAccess.DataModels;
+using VacationMachine.DataAccess.DataModels.Enums;
+using VacationMachine.DataAccess.Repositories.Concrete;
+using VacationMachine.DataAccess.Repositories.Interfaces;
 using VacationMachine.Models;
-using VacationMachine.ResultHandlers;
 
 namespace VacationMachine.Tests;
 
 public class VacationServiceTests
 {
-    private readonly IVacationDatabase _database = new VacationDatabase();
+    private readonly IVacationRepository _repository = new VacationRepository();
 
     private readonly VacationDaysLimitSettings _settings = new()
     {
@@ -25,7 +28,7 @@ public class VacationServiceTests
         }
     };
 
-    private VacationService _sut = null!;
+    private VacationRequestProcessorService _sut = null!;
 
     [SetUp]
     public void Setup()
@@ -34,27 +37,28 @@ public class VacationServiceTests
         optionsMock.Setup(a => a.Current)
             .Returns(_settings);
 
-        _sut = new VacationService(_database,
-            Array.Empty<IResultHandler>(), optionsMock.Object);
+        VacationCalculator vacationCalculator = new();
+        _sut = new VacationRequestProcessorService(_repository, vacationCalculator, Array.Empty<IResultHandler>(),
+            optionsMock.Object);
     }
 
-    [TestCase(Employee.EmployeeStatus.Slacker, 0, 1, Result.Denied)]
-    [TestCase(Employee.EmployeeStatus.Regular, 24, 1, Result.Approved)]
-    [TestCase(Employee.EmployeeStatus.Regular, 25, 1, Result.Approved)]
-    [TestCase(Employee.EmployeeStatus.Regular, 26, 1, Result.Denied)]
-    [TestCase(Employee.EmployeeStatus.Regular, 0, 27, Result.Denied)]
-    [TestCase(Employee.EmployeeStatus.Performer, 24, 1, Result.Approved)]
-    [TestCase(Employee.EmployeeStatus.Performer, 25, 1, Result.Approved)]
-    [TestCase(Employee.EmployeeStatus.Performer, 26, 1, Result.Manual)]
-    [TestCase(Employee.EmployeeStatus.Performer, 0, 27, Result.Manual)]
-    [TestCase(Employee.EmployeeStatus.Performer, 44, 1, Result.Manual)]
-    [TestCase(Employee.EmployeeStatus.Performer, 45, 1, Result.Denied)]
-    [TestCase(Employee.EmployeeStatus.Performer, 0, 46, Result.Denied)]
-    public void CheckExpectedResult(Employee.EmployeeStatus employeeStatus, long daysAlreadyTaken, long daysRequested,
+    [TestCase(EmployeeStatus.Slacker, 0, 1, Result.Denied)]
+    [TestCase(EmployeeStatus.Regular, 24, 1, Result.Approved)]
+    [TestCase(EmployeeStatus.Regular, 25, 1, Result.Approved)]
+    [TestCase(EmployeeStatus.Regular, 26, 1, Result.Denied)]
+    [TestCase(EmployeeStatus.Regular, 0, 27, Result.Denied)]
+    [TestCase(EmployeeStatus.Performer, 24, 1, Result.Approved)]
+    [TestCase(EmployeeStatus.Performer, 25, 1, Result.Approved)]
+    [TestCase(EmployeeStatus.Performer, 26, 1, Result.Manual)]
+    [TestCase(EmployeeStatus.Performer, 0, 27, Result.Manual)]
+    [TestCase(EmployeeStatus.Performer, 44, 1, Result.Manual)]
+    [TestCase(EmployeeStatus.Performer, 45, 1, Result.Denied)]
+    [TestCase(EmployeeStatus.Performer, 0, 46, Result.Denied)]
+    public void CheckExpectedResult(EmployeeStatus employeeStatus, long daysAlreadyTaken, long daysRequested,
         Result expectedResult)
     {
         //Arrange
-        _database.Save(new Employee
+        _repository.Save(new Employee
         {
             Status = employeeStatus,
             EmployeeId = 1,

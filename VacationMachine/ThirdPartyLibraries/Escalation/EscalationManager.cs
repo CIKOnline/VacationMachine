@@ -1,4 +1,4 @@
-﻿namespace VacationMachine.Escalation;
+﻿namespace ThirdPartyLibraries.Escalation;
 
 public class EscalationManager : IEscalationManager
 {

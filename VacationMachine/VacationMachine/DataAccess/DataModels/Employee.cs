@@ -1,16 +1,10 @@
 using System.Collections.Generic;
+using VacationMachine.DataAccess.DataModels.Enums;
 
-namespace VacationMachine.Database.Schema;
+namespace VacationMachine.DataAccess.DataModels;
 
 public class Employee
 {
-    public enum EmployeeStatus
-    {
-        Performer,
-        Regular,
-        Slacker
-    }
-
     public long EmployeeId { get; init; }
 
     public EmployeeStatus Status { get; set; }

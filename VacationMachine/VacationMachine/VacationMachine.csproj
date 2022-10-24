@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\ThirdPartyLibraries\ThirdPartyLibraries.csproj"/>
 		<ProjectReference Include="..\VacationMachine.IoC\VacationMachine.IoC.csproj"/>
 	</ItemGroup>
 

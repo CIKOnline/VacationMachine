@@ -1,8 +1,9 @@
+using ThirdPartyLibraries.Email;
 using VacationMachine.AppSettings;
-using VacationMachine.Database.Schema;
-using VacationMachine.Email;
+using VacationMachine.BusinessLogic.ResultHandlers.Interfaces;
+using VacationMachine.DataAccess.DataModels;
 
-namespace VacationMachine.ResultHandlers;
+namespace VacationMachine.BusinessLogic.ResultHandlers.Concrete;
 
 public class SendEmailResultResultHandler : IResultHandler
 {

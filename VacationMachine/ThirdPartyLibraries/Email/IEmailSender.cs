@@ -1,4 +1,4 @@
-﻿namespace VacationMachine.Email;
+﻿namespace ThirdPartyLibraries.Email;
 
 public interface IEmailSender
 {

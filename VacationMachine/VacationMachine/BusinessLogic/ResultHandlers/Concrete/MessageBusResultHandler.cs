@@ -1,8 +1,9 @@
+using ThirdPartyLibraries.MessageBus;
 using VacationMachine.AppSettings;
-using VacationMachine.Database.Schema;
-using VacationMachine.MessageBus;
+using VacationMachine.BusinessLogic.ResultHandlers.Interfaces;
+using VacationMachine.DataAccess.DataModels;
 
-namespace VacationMachine.ResultHandlers;
+namespace VacationMachine.BusinessLogic.ResultHandlers.Concrete;
 
 public class MessageBusResultHandler : IResultHandler
 {

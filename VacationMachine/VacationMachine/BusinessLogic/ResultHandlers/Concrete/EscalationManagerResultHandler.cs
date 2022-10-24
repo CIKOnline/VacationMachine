@@ -1,7 +1,8 @@
-using VacationMachine.Database.Schema;
-using VacationMachine.Escalation;
+using ThirdPartyLibraries.Escalation;
+using VacationMachine.BusinessLogic.ResultHandlers.Interfaces;
+using VacationMachine.DataAccess.DataModels;
 
-namespace VacationMachine.ResultHandlers;
+namespace VacationMachine.BusinessLogic.ResultHandlers.Concrete;
 
 public class EscalationManagerResultHandler : IResultHandler
 {
