@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>10</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="VacationMachine.IoC\Class1.cs">
+			<Link>VacationMachine.DependencyInjection\Class1.cs</Link>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ThirdPartyLibraries\ThirdPartyLibraries.csproj"/>
+		<ProjectReference Include="..\VacationMachine.IoC\VacationMachine.IoC.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="9.0.1"/>
+	</ItemGroup>
+
+</Project>
