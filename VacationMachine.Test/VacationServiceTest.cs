@@ -111,7 +111,25 @@ namespace VacationMachine.Test
         }
 
         [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusPerformerAndTotalDaysEqual45_ThenResultManual()
+        public void RequestPaidDaysOff_WhenStatusPerformerAndTotalDaysEqual44_ThenResultManual()
+        {
+            // Arrange
+            var employee = new object[] { "PERFORMER", 0 };
+            var databaseMock = GetDatabase(employee);
+            var messageBusMock = GetMessageBus();
+            var emailSenderMock = GetEmailSender();
+            var escalationManagerMock = GetEscalationManager();
+            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
+
+            // Act
+            var result = vacationService.RequestPaidDaysOff(44, 1);
+
+            // Assert
+            Assert.AreEqual(result, Result.Manual);
+        }
+
+        [TestMethod]
+        public void RequestPaidDaysOff_WhenStatusPerformerAndTotalDaysEqual45_ThenResultDenied()
         {
             // Arrange
             var employee = new object[] { "PERFORMER", 0 };
@@ -123,24 +141,6 @@ namespace VacationMachine.Test
 
             // Act
             var result = vacationService.RequestPaidDaysOff(45, 1);
-
-            // Assert
-            Assert.AreEqual(result, Result.Manual);
-        }
-
-        [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusPerformerAndTotalDaysEqual46_ThenResultDenied()
-        {
-            // Arrange
-            var employee = new object[] { "PERFORMER", 0 };
-            var databaseMock = GetDatabase(employee);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
-
-            // Act
-            var result = vacationService.RequestPaidDaysOff(46, 1);
 
             // Assert
             Assert.AreEqual(result, Result.Denied);
