@@ -1,8 +1,11 @@
-﻿namespace VacationMachine
+﻿using VacationMachine.Models;
+
+namespace VacationMachine
 {
     public interface IVacationDatabase
     {
-        object[] FindByEmployeeId(long employeeId);
-        void Save(object[] employeeData);
+        void AddEmployeeHolidays(long employeeId, int days);
+        EmployeeModel FindByEmployeeId(long employeeId);
+        void Save(EmployeeModel employeeData);
     }
 }

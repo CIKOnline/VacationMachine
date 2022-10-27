@@ -1,13 +1,30 @@
-﻿namespace VacationMachine
+﻿using VacationMachine.Enums;
+using VacationMachine.Models;
+
+namespace VacationMachine
 {
     public class VacationDatabase : IVacationDatabase
     {
-        public object[] FindByEmployeeId(long employeeId)
+        public void AddEmployeeHolidays(long employeeId, int days)
         {
-            return new object[] { "SLACKER", 1 };
+            var employee = FindByEmployeeId(employeeId);
+
+            employee.TakenHolidays += days;
+
+            Save(employee);
         }
 
-        public void Save(object[] employeeData)
+        public EmployeeModel FindByEmployeeId(long employeeId)
+        {
+            return new EmployeeModel
+            {
+                Id = employeeId,
+                Status = EmploymentStatus.SLACKER,
+                TakenHolidays = 1
+            };
+        }
+
+        public void Save(EmployeeModel employeeData)
         {
 
         }

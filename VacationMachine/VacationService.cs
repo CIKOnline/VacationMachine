@@ -1,4 +1,5 @@
 ﻿using System;
+using VacationMachine.Enums;
 
 namespace VacationMachine
 {
@@ -8,14 +9,20 @@ namespace VacationMachine
         private readonly IMessageBus _messageBus;
         private readonly IEmailSender _emailSender;
         private readonly IEscalationManager _escalationManager;
+        private readonly IResultCalculator _resultCalculator;
 
-        public VacationService(IVacationDatabase database, IMessageBus messageBus, IEmailSender emailSender,
-            IEscalationManager escalationManager)
+        public VacationService(
+            IVacationDatabase database, 
+            IMessageBus messageBus, 
+            IEmailSender emailSender,
+            IEscalationManager escalationManager,
+            IResultCalculator resultCalculator)
         {
             _database = database;
             _messageBus = messageBus;
             _emailSender = emailSender;
             _escalationManager = escalationManager;
+            _resultCalculator = resultCalculator;
         }
 
         public Result RequestPaidDaysOff(int days, long employeeId)
@@ -25,38 +32,24 @@ namespace VacationMachine
                 throw new ArgumentException();
             }
 
-            Result result;
-            var employeeData = _database.FindByEmployeeId(employeeId);
-            var employeeStatus = (string)employeeData[0];
-            var daysSoFar = (int)employeeData[1];
+            var employee = _database.FindByEmployeeId(employeeId);
+            var totalDays = employee.TakenHolidays + days;
+            var result = _resultCalculator.GetResult(totalDays, employee.Status);
 
-            if (daysSoFar + days > 26)
+            if (result.Equals(Result.Denied))
             {
-                if (employeeStatus.Equals("PERFORMER") && daysSoFar + days < 45)
-                {
-                    result = Result.Manual;
-                    _escalationManager.NotifyNewPendingRequest(employeeId);
-                }
-                else
-                {
-                    result = Result.Denied;
-                    _emailSender.Send("next time");
-                }
+                _emailSender.Send("next time");
             }
-            else
+
+            if (result.Equals(Result.Approved))
             {
-                if (employeeStatus.Equals("SLACKER"))
-                {
-                    result = Result.Denied;
-                    _emailSender.Send("next time");
-                }
-                else
-                {
-                    employeeData[1] = daysSoFar + days;
-                    result = Result.Approved;
-                    _database.Save(employeeData);
-                    _messageBus.SendEvent("request approved");
-                }
+                _database.AddEmployeeHolidays(employeeId, days);
+                _messageBus.SendEvent("request approved");
+            }
+
+            if (result.Equals(Result.Manual))
+            {
+                _escalationManager.NotifyNewPendingRequest(employeeId);
             }
 
             return result;

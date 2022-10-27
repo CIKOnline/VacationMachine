@@ -1,4 +1,5 @@
 using Moq;
+using VacationMachine.Enums;
 
 namespace VacationMachine.Test
 {
@@ -7,184 +8,103 @@ namespace VacationMachine.Test
     {
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void RequestPaidDaysOff_WhenDaysMinusOne_ThenThrow()
+        public void RequestPaidDaysOff_WhenDaysBelowZero_ThenThrow()
         {
             // Arrange
-            var databaseMock = GetDatabase(null);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
+            var vacationService = GetVacationService(
+                GetDatabaseMock().Object, 
+                GetMessageBusMock().Object, 
+                GetEmailSenderMock().Object, 
+                GetEscalationManagerMock().Object, 
+                GetResultCalculator(Result.Denied)
+            );
 
             // Act
             vacationService.RequestPaidDaysOff(-1, 1);
         }
 
         [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusSlacker_ThenResultDenied()
+        [ExpectedException(typeof(ArgumentException))]
+        public void RequestPaidDaysOff_WhenResultApproved_ThenAddEmployeeHolidaysAndSendEventIsCalled()
         {
             // Arrange
-            var employee = new object[] { "SLACKER", 0 };
-            var databaseMock = GetDatabase(employee);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
+            var databaseMock = GetDatabaseMock();
+            var messageBusMock = GetMessageBusMock();
+            var result = Result.Approved;
+            var vacationService = GetVacationService(databaseMock.Object, messageBusMock.Object, GetEmailSenderMock().Object, GetEscalationManagerMock().Object, GetResultCalculator(result));
 
             // Act
-            var result = vacationService.RequestPaidDaysOff(0, 1);
+            vacationService.RequestPaidDaysOff(-1, 1);
 
             // Assert
-            Assert.AreEqual(result, Result.Denied);
+            databaseMock.Verify(v => v.AddEmployeeHolidays(It.IsAny<long>(), It.IsAny<int>()));
+            messageBusMock.Verify(v => v.SendEvent(It.IsAny<string>()));
         }
 
         [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusRegularAndTotalDaysEqual26_ThenResultApproved()
+        [ExpectedException(typeof(ArgumentException))]
+        public void RequestPaidDaysOff_WhenResultDenied_ThenEmailSent()
         {
             // Arrange
-            var employee = new object[] { "REGULAR", 0 };
-            var databaseMock = GetDatabase(employee);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
+            var emailSenderMock = GetEmailSenderMock();
+            var result = Result.Denied;
+            var vacationService = GetVacationService(GetDatabaseMock().Object, GetMessageBusMock().Object, GetEmailSenderMock().Object, GetEscalationManagerMock().Object, GetResultCalculator(result));
 
             // Act
-            var result = vacationService.RequestPaidDaysOff(26, 1);
+            vacationService.RequestPaidDaysOff(-1, 1);
 
             // Assert
-            Assert.AreEqual(result, Result.Approved);
+            emailSenderMock.Verify(v => v.Send(It.IsAny<string>()));
         }
 
         [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusRegularAndTotalDaysEqual27_ThenResultDenied()
+        [ExpectedException(typeof(ArgumentException))]
+        public void RequestPaidDaysOff_WhenResultManual_ThenNotifyNewPendingRequest()
         {
             // Arrange
-            var employee = new object[] { "REGULAR", 0 };
-            var databaseMock = GetDatabase(employee);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
+            var emailSenderMock = GetEscalationManagerMock();
+            var result = Result.Denied;
+            var vacationService = GetVacationService(GetDatabaseMock().Object, GetMessageBusMock().Object, GetEmailSenderMock().Object, GetEscalationManagerMock().Object, GetResultCalculator(result));
 
             // Act
-            var result = vacationService.RequestPaidDaysOff(27, 1);
+            vacationService.RequestPaidDaysOff(-1, 1);
 
             // Assert
-            Assert.AreEqual(result, Result.Denied);
+            emailSenderMock.Verify(v => v.NotifyNewPendingRequest(It.IsAny<long>()));
         }
 
-        [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusPerformerAndTotalDaysEqual26_ThenResultApproved()
+        private VacationService GetVacationService(IVacationDatabase databaseMock, IMessageBus messageBusMock, IEmailSender emailSenderMock, IEscalationManager escalationManagerMock, IResultCalculator resultCalculator)
         {
-            // Arrange
-            var employee = new object[] { "PERFORMER", 0 };
-            var databaseMock = GetDatabase(employee);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
-
-            // Act
-            var result = vacationService.RequestPaidDaysOff(26, 1);
-
-            // Assert
-            Assert.AreEqual(result, Result.Approved);
+            return new VacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock, resultCalculator);
         }
 
-        [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusPerformerAndTotalDaysEqual27_ThenResultManual()
+        private Mock<IVacationDatabase> GetDatabaseMock()
         {
-            // Arrange
-            var employee = new object[] { "PERFORMER", 0 };
-            var databaseMock = GetDatabase(employee);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
-
-            // Act
-            var result = vacationService.RequestPaidDaysOff(27, 1);
-
-            // Assert
-            Assert.AreEqual(result, Result.Manual);
+            return new Mock<IVacationDatabase>();
         }
 
-        [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusPerformerAndTotalDaysEqual44_ThenResultManual()
+        private Mock<IMessageBus> GetMessageBusMock()
         {
-            // Arrange
-            var employee = new object[] { "PERFORMER", 0 };
-            var databaseMock = GetDatabase(employee);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
-
-            // Act
-            var result = vacationService.RequestPaidDaysOff(44, 1);
-
-            // Assert
-            Assert.AreEqual(result, Result.Manual);
+            return new Mock<IMessageBus>();
         }
 
-        [TestMethod]
-        public void RequestPaidDaysOff_WhenStatusPerformerAndTotalDaysEqual45_ThenResultDenied()
+        private Mock<IEmailSender> GetEmailSenderMock()
         {
-            // Arrange
-            var employee = new object[] { "PERFORMER", 0 };
-            var databaseMock = GetDatabase(employee);
-            var messageBusMock = GetMessageBus();
-            var emailSenderMock = GetEmailSender();
-            var escalationManagerMock = GetEscalationManager();
-            var vacationService = GetVacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
-
-            // Act
-            var result = vacationService.RequestPaidDaysOff(45, 1);
-
-            // Assert
-            Assert.AreEqual(result, Result.Denied);
+            return new Mock<IEmailSender>();
         }
 
-        private VacationService GetVacationService(IVacationDatabase databaseMock, IMessageBus messageBusMock, IEmailSender emailSenderMock, IEscalationManager escalationManagerMock)
+        private Mock<IEscalationManager> GetEscalationManagerMock()
         {
-            return new VacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock);
+            return new Mock<IEscalationManager>();
         }
 
-        private IVacationDatabase GetDatabase(object[] employee)
+        private IResultCalculator GetResultCalculator(Result result)
         {
-            var databaseMock = new Mock<IVacationDatabase>();
+            var resultCalculatorMock = new Mock<IResultCalculator>();
 
-            databaseMock.Setup(db => db.FindByEmployeeId(It.IsAny<long>())).Returns(employee);
+            resultCalculatorMock.Setup(mb => mb.GetResult(It.IsAny<int>(), It.IsAny<EmploymentStatus>())).Returns(result);
 
-            return databaseMock.Object;
-        }
-
-        private IMessageBus GetMessageBus()
-        {
-            var messageBusMock = new Mock<IMessageBus>();
-
-            //messageBusMock.Setup(mb => mb.SendEvent(It.IsAny<string>()));
-
-            return messageBusMock.Object;
-        }
-
-        private IEmailSender GetEmailSender()
-        {
-            var emailSenderMock = new Mock<IEmailSender>();
-
-            //emailSenderMock.Setup(es => es.Send(It.IsAny<string>()));
-
-            return emailSenderMock.Object;
-        }
-
-        private IEscalationManager GetEscalationManager()
-        {
-            var escalationManagerMock = new Mock<IEscalationManager>();
-
-            //emailSenderMock.Setup(es => es.Send(It.IsAny<string>()));
-
-            return escalationManagerMock.Object;
+            return resultCalculatorMock.Object;
         }
     }
 }
