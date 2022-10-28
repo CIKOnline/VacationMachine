@@ -4,7 +4,7 @@ namespace VacationMachine
 {
     public class VacationService
     {
-        private readonly IVacationDatabase _database;
+        private readonly IVacationDatabase _vacationDatabase;
         private readonly IMessageBus _messageBus;
         private readonly IEmailSender _emailSender;
         private readonly IEscalationManager _escalationManager;
@@ -16,7 +16,7 @@ namespace VacationMachine
             IEscalationManager escalationManager
         )
         {
-            _database = database;
+            _vacationDatabase = database;
             _messageBus = messageBus;
             _emailSender = emailSender;
             _escalationManager = escalationManager;
@@ -30,7 +30,7 @@ namespace VacationMachine
             }
 
             Result result;
-            var employee = _database.FindByEmployeeId(employeeId);
+            var employee = _vacationDatabase.FindByEmployeeId(employeeId);
 
             if (employee.DaysSoFar + days > 26)
             {
@@ -56,7 +56,7 @@ namespace VacationMachine
                 {
                     employee.DaysSoFar += days;
                     result = Result.Approved;
-                    _database.Save(employee);
+                    _vacationDatabase.Save(employee);
                     _messageBus.SendEvent("request approved");
                 }
             }
