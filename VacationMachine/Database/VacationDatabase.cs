@@ -4,8 +4,9 @@
     {
         public Employee FindByEmployeeId(long employeeId)
         {
-            return new Employee { 
-                Status = "SLACKER", 
+            return new Employee
+            {
+                Status = "SLACKER",
                 DaysSoFar = 1
             };
         }
