@@ -6,6 +6,11 @@ namespace VacationMachine
     {
         public Result GetResult(int totalDays, EmploymentStatus employeeStatus)
         {
+            if (employeeStatus.Equals(EmploymentStatus.SLACKER))
+            {
+                return Result.Denied;
+            }
+
             if (totalDays > Configuration.GetMaxDays())
             {
                 if (employeeStatus.Equals(EmploymentStatus.PERFORMER) && totalDays < Configuration.GetMaxDaysForPerformers())
@@ -14,20 +19,12 @@ namespace VacationMachine
                 }
                 else
                 {
-
                     return Result.Denied;
                 }
             }
             else
             {
-                if (employeeStatus.Equals(EmploymentStatus.SLACKER))
-                {
-                    return Result.Denied;
-                }
-                else
-                {
-                    return Result.Approved;
-                }
+                return Result.Approved;
             }
         }
     }

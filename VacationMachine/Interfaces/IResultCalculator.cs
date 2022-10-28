@@ -1,6 +1,6 @@
 ﻿using VacationMachine.Enums;
 
-namespace VacationMachine
+namespace VacationMachine.Interfaces
 {
     public interface IResultCalculator
     {
