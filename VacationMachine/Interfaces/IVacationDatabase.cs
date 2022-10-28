@@ -1,6 +1,6 @@
 ﻿using VacationMachine.Models;
 
-namespace VacationMachine
+namespace VacationMachine.Interfaces
 {
     public interface IVacationDatabase
     {

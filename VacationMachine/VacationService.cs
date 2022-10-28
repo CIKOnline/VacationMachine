@@ -1,28 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using VacationMachine.Enums;
+using VacationMachine.Interfaces;
+using VacationMachine.ResultHandler.Interfaces;
 
 namespace VacationMachine
 {
     public class VacationService
     {
         private readonly IVacationDatabase _database;
-        private readonly IMessageBus _messageBus;
-        private readonly IEmailSender _emailSender;
-        private readonly IEscalationManager _escalationManager;
         private readonly IResultCalculator _resultCalculator;
+        private readonly IEnumerable<IResultHandler> _resultHandlers;
 
         public VacationService(
-            IVacationDatabase database, 
-            IMessageBus messageBus, 
-            IEmailSender emailSender,
-            IEscalationManager escalationManager,
-            IResultCalculator resultCalculator)
+            IVacationDatabase database,
+            IResultCalculator resultCalculator,
+            IEnumerable<IResultHandler> resultHandlers)
         {
             _database = database;
-            _messageBus = messageBus;
-            _emailSender = emailSender;
-            _escalationManager = escalationManager;
             _resultCalculator = resultCalculator;
+            _resultHandlers = resultHandlers;
         }
 
         public Result RequestPaidDaysOff(int days, long employeeId)
@@ -36,23 +34,19 @@ namespace VacationMachine
             var totalDays = employee.TakenHolidays + days;
             var result = _resultCalculator.GetResult(totalDays, employee.Status);
 
-            if (result.Equals(Result.Denied))
-            {
-                _emailSender.Send("next time");
-            }
+            CallServicesByResult(result, employeeId, days);
 
+            return result;
+        }
+
+        private void CallServicesByResult(Result result, long employeeId, int days)
+        {
             if (result.Equals(Result.Approved))
             {
                 _database.AddEmployeeHolidays(employeeId, days);
-                _messageBus.SendEvent("request approved");
             }
 
-            if (result.Equals(Result.Manual))
-            {
-                _escalationManager.NotifyNewPendingRequest(employeeId);
-            }
-
-            return result;
+            _resultHandlers.ToList().ForEach(h => h.Handle(employeeId, result, days));            
         }
     }
 }

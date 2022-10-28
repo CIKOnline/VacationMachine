@@ -1,5 +1,8 @@
 using Moq;
 using VacationMachine.Enums;
+using VacationMachine.Interfaces;
+using VacationMachine.ResultHandler;
+using VacationMachine.ResultHandler.Interfaces;
 
 namespace VacationMachine.Test
 {
@@ -75,7 +78,15 @@ namespace VacationMachine.Test
 
         private VacationService GetVacationService(IVacationDatabase databaseMock, IMessageBus messageBusMock, IEmailSender emailSenderMock, IEscalationManager escalationManagerMock, IResultCalculator resultCalculator)
         {
-            return new VacationService(databaseMock, messageBusMock, emailSenderMock, escalationManagerMock, resultCalculator);
+            return new VacationService(databaseMock, resultCalculator, GetResultHandlers());
+        }
+
+        private IEnumerable<IResultHandler> GetResultHandlers()
+        {
+            return new List<IResultHandler>()
+            {
+                new MessageBusResultHandler(GetMessageBusMock().Object), new EmailSenderResultHandler(GetEmailSenderMock().Object), new EscalationManagerResultHandler(GetEscalationManagerMock().Object),
+            };
         }
 
         private Mock<IVacationDatabase> GetDatabaseMock()

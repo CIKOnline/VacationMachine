@@ -1,4 +1,5 @@
 ﻿using VacationMachine.Enums;
+using VacationMachine.Interfaces;
 
 namespace VacationMachine
 {
