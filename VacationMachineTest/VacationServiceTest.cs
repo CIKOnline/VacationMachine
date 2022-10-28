@@ -5,7 +5,6 @@ using VacationMachine;
 
 namespace VacationMachineTest
 {
-    [SetUpFixture]
     public class VacationServiceTest
     {
         private const int EMPLOYEE_ID = 1;
@@ -85,7 +84,9 @@ namespace VacationMachineTest
         }
 
         [Test]
-        public void RequestPaidDaysOff_WhenPerformerAndDaysAboveAcceptanceRequirementRange_ThenDenied()
+        [TestCase(45)]
+        [TestCase(46)]
+        public void RequestPaidDaysOff_WhenPerformerAndDaysAboveAcceptanceRequirementRange_ThenDenied(int days)
         {
             var expectedResult = Result.Denied;
 
@@ -98,8 +99,7 @@ namespace VacationMachineTest
                 };
             });
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, 45);
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, 46);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
         }
 
         private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days)
