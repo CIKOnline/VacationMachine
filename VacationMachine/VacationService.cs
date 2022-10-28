@@ -20,9 +20,9 @@ namespace VacationMachine
 
         public Result RequestPaidDaysOff(int days, long employeeId)
         {
-            if (days < 0)
+            if (days <= 0)
             {
-                throw new ArgumentException();
+                throw new ArgumentException($"Invalid amount of days: {days}");
             }
 
             Result result;
