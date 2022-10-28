@@ -4,11 +4,11 @@ namespace VacationMachine
 {
     public class Program
     {
-        static void Main()
+        private static void Main()
         {
             var vacationService = new VacationService(
-                new VacationDatabase(), 
-                new MessageBus(), 
+                new VacationDatabase(),
+                new MessageBus(),
                 new EmailSender(),
                 new EscalationManager()
             );

@@ -9,8 +9,12 @@ namespace VacationMachine
         private readonly IEmailSender _emailSender;
         private readonly IEscalationManager _escalationManager;
 
-        public VacationService(IVacationDatabase database, IMessageBus messageBus, IEmailSender emailSender,
-            IEscalationManager escalationManager)
+        public VacationService(
+            IVacationDatabase database,
+            IMessageBus messageBus,
+            IEmailSender emailSender,
+            IEscalationManager escalationManager
+        )
         {
             _database = database;
             _messageBus = messageBus;
