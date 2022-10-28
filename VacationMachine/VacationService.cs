@@ -30,13 +30,11 @@ namespace VacationMachine
             }
 
             Result result;
-            var employeeData = _database.FindByEmployeeId(employeeId);
-            var employeeStatus = (string)employeeData[0];
-            var daysSoFar = (int)employeeData[1];
+            var employee = _database.FindByEmployeeId(employeeId);
 
-            if (daysSoFar + days > 26)
+            if (employee.DaysSoFar + days > 26)
             {
-                if (employeeStatus.Equals("PERFORMER") && daysSoFar + days < 45)
+                if (employee.Status.Equals("PERFORMER") && employee.DaysSoFar + days < 45)
                 {
                     result = Result.Manual;
                     _escalationManager.NotifyNewPendingRequest(employeeId);
@@ -49,16 +47,16 @@ namespace VacationMachine
             }
             else
             {
-                if (employeeStatus.Equals("SLACKER"))
+                if (employee.Status.Equals("SLACKER"))
                 {
                     result = Result.Denied;
                     _emailSender.Send("next time");
                 }
                 else
                 {
-                    employeeData[1] = daysSoFar + days;
+                    employee.DaysSoFar += days;
                     result = Result.Approved;
-                    _database.Save(employeeData);
+                    _database.Save(employee);
                     _messageBus.SendEvent("request approved");
                 }
             }

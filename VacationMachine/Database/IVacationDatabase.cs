@@ -2,8 +2,8 @@
 {
     public interface IVacationDatabase
     {
-        object[] FindByEmployeeId(long employeeId);
+        Employee FindByEmployeeId(long employeeId);
 
-        void Save(object[] employeeData);
+        void Save(Employee employeeData);
     }
 }

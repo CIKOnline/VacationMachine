@@ -2,12 +2,15 @@
 {
     public class VacationDatabase : IVacationDatabase
     {
-        public object[] FindByEmployeeId(long employeeId)
+        public Employee FindByEmployeeId(long employeeId)
         {
-            return new object[] { "SLACKER", 1 };
+            return new Employee { 
+                Status = "SLACKER", 
+                DaysSoFar = 1
+            };
         }
 
-        public void Save(object[] employeeData)
+        public void Save(Employee employeeData)
         {
         }
     }
