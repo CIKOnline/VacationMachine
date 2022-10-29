@@ -49,16 +49,11 @@ namespace VacationMachineTest
         {
             var expectedResult = Result.Approved;
 
-            _vacationDatabase.FindByEmployeeId(EMPLOYEE_ID).Returns(callInfo =>
-            {
-                return new Employee
-                {
-                    Status = "PERFORMER",
-                    DaysSoFar = 0
-                };
-            });
-
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
+            _vacationDatabase.ReceivedWithAnyArgs(1).Save(default);
+            _messageBus.Received(1).SendEvent("request approved");
+            _emailSender.DidNotReceiveWithAnyArgs().Send(default);
+            _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
         }
 
         [Test]
@@ -67,17 +62,11 @@ namespace VacationMachineTest
         {
             var expectedResult = Result.Manual;
 
-            _vacationDatabase.FindByEmployeeId(EMPLOYEE_ID).Returns(callInfo =>
-            {
-                return new Employee
-                {
-                    Status = "PERFORMER",
-                    DaysSoFar = 0
-                };
-            });
-
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
             _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
+            _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
+            _emailSender.DidNotReceiveWithAnyArgs().Send(default);
+            _escalationManager.Received(1).NotifyNewPendingRequest(EMPLOYEE_ID);
         }
 
         [Test]
@@ -87,6 +76,15 @@ namespace VacationMachineTest
         {
             var expectedResult = Result.Denied;
 
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
+            _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
+            _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
+            _emailSender.Received(1).Send("next time");
+            _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
+        }
+
+        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days)
+        {
             _vacationDatabase.FindByEmployeeId(EMPLOYEE_ID).Returns(callInfo =>
             {
                 return new Employee
@@ -96,11 +94,6 @@ namespace VacationMachineTest
                 };
             });
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
-        }
-
-        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days)
-        {
             var actualResult = _sut.RequestPaidDaysOff(days, EMPLOYEE_ID);
 
             Assert.AreEqual(expectedResult, actualResult);
