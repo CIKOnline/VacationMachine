@@ -1,4 +1,5 @@
 ﻿using VacationMachine.Enums;
+using VacationMachine.Models;
 using VacationMachine.ResultHandler.Interfaces;
 
 namespace VacationMachine.ResultHandler
@@ -12,7 +13,7 @@ namespace VacationMachine.ResultHandler
             _messageBus = messageBus;
         }
 
-        public void Handle(long employeeId, Result result, int daysToTake)
+        public void Handle(EmployeeModel employee, Result result, int daysToTake)
         {
             if (result.Equals(Result.Approved))
             {

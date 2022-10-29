@@ -5,7 +5,7 @@ using VacationMachine.ResultHandler;
 namespace VacationMachine.Test.ResultHandlerTests
 {
     [TestClass]
-    public class MessageBusResultHandlerTest
+    public class MessageBusResultHandlerTest : ResultHandlerBaseTest
     {
         [TestMethod]
         public void Handle_WhenResultApproved_ThenSendEventCalled()
@@ -15,7 +15,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var messageBusResultHandler = new MessageBusResultHandler(messageBusMock.Object);
 
             // Act
-            messageBusResultHandler.Handle(1, Result.Approved, 0);
+            messageBusResultHandler.Handle(GetDefaultEmployee(), Result.Approved, 0);
 
             // Assert
             messageBusMock.Verify(v => v.SendEvent(Configuration.GetEventText()), Times.Once());
@@ -29,7 +29,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var messageBusResultHandler = new MessageBusResultHandler(messageBusMock.Object);
 
             // Act
-            messageBusResultHandler.Handle(1, Result.Denied, 0);
+            messageBusResultHandler.Handle(GetDefaultEmployee(), Result.Denied, 0);
 
             // Assert
             messageBusMock.Verify(v => v.SendEvent(Configuration.GetEventText()), Times.Never());
@@ -43,7 +43,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var messageBusResultHandler = new MessageBusResultHandler(messageBusMock.Object);
 
             // Act
-            messageBusResultHandler.Handle(1, Result.Manual, 0);
+            messageBusResultHandler.Handle(GetDefaultEmployee(), Result.Manual, 0);
 
             // Assert
             messageBusMock.Verify(v => v.SendEvent(Configuration.GetEventText()), Times.Never());

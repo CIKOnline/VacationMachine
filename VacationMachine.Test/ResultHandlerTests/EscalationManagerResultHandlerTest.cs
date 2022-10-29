@@ -5,7 +5,7 @@ using VacationMachine.ResultHandler;
 namespace VacationMachine.Test.ResultHandlerTests
 {
     [TestClass]
-    public class EscalationManagerResultHandlerTest
+    public class EscalationManagerResultHandlerTest : ResultHandlerBaseTest
     {
         [TestMethod]
         public void Handle_WhenResultApproved_ThenNotifyNewPendingRequestNotCalled()
@@ -15,7 +15,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var escalationManagerResultHandler = new EscalationManagerResultHandler(escalationManagerMock.Object);
 
             // Act
-            escalationManagerResultHandler.Handle(1, Result.Approved, 0);
+            escalationManagerResultHandler.Handle(GetDefaultEmployee(), Result.Approved, 0);
 
             // Assert
             escalationManagerMock.Verify(v => v.NotifyNewPendingRequest(1), Times.Never());
@@ -29,7 +29,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var escalationManagerResultHandler = new EscalationManagerResultHandler(escalationManagerMock.Object);
 
             // Act
-            escalationManagerResultHandler.Handle(1, Result.Denied, 0);
+            escalationManagerResultHandler.Handle(GetDefaultEmployee(), Result.Denied, 0);
 
             // Assert
             escalationManagerMock.Verify(v => v.NotifyNewPendingRequest(1), Times.Never());
@@ -43,7 +43,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var escalationManagerResultHandler = new EscalationManagerResultHandler(escalationManagerMock.Object);
 
             // Act
-            escalationManagerResultHandler.Handle(1, Result.Manual, 0);
+            escalationManagerResultHandler.Handle(GetDefaultEmployee(), Result.Manual, 0);
 
             // Assert
             escalationManagerMock.Verify(v => v.NotifyNewPendingRequest(1), Times.Once());

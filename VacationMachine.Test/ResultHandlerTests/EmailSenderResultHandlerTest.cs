@@ -1,11 +1,12 @@
 ﻿using Moq;
 using VacationMachine.Enums;
+using VacationMachine.Models;
 using VacationMachine.ResultHandler;
 
 namespace VacationMachine.Test.ResultHandlerTests
 {
     [TestClass]
-    public class EmailSenderResultHandlerTest
+    public class EmailSenderResultHandlerTest : ResultHandlerBaseTest
     {
         [TestMethod]
         public void Handle_WhenResultApproved_ThenSendNotCalled()
@@ -15,7 +16,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var emailSenderResultHandler = new EmailSenderResultHandler(emailSenderMock.Object);
 
             // Act
-            emailSenderResultHandler.Handle(0, Result.Approved, 0);
+            emailSenderResultHandler.Handle(GetDefaultEmployee(), Result.Approved, 0);
 
             // Assert
             emailSenderMock.Verify(v => v.Send(Configuration.GetEmailText()), Times.Never());
@@ -29,7 +30,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var emailSenderResultHandler = new EmailSenderResultHandler(emailSenderMock.Object);
 
             // Act
-            emailSenderResultHandler.Handle(0, Result.Denied, 0);
+            emailSenderResultHandler.Handle(GetDefaultEmployee(), Result.Denied, 0);
 
             // Assert
             emailSenderMock.Verify(v => v.Send(Configuration.GetEmailText()));
@@ -43,7 +44,7 @@ namespace VacationMachine.Test.ResultHandlerTests
             var emailSenderResultHandler = new EmailSenderResultHandler(emailSenderMock.Object);
 
             // Act
-            emailSenderResultHandler.Handle(0, Result.Manual, 0);
+            emailSenderResultHandler.Handle(GetDefaultEmployee(), Result.Manual, 0);
 
             // Assert
             emailSenderMock.Verify(v => v.Send(Configuration.GetEmailText()), Times.Never());

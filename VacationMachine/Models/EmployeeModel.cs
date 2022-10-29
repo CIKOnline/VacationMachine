@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using VacationMachine.Enums;
 
 namespace VacationMachine.Models
@@ -13,6 +9,6 @@ namespace VacationMachine.Models
 
         public EmploymentStatus Status { get; set; }
 
-        public int TakenHolidays { get; set; }
+        public List<int> TakenHolidays { get; set; }
     }
 }

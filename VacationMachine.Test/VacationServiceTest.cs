@@ -1,6 +1,7 @@
 using Moq;
 using VacationMachine.Enums;
 using VacationMachine.Interfaces;
+using VacationMachine.Models;
 using VacationMachine.ResultHandler;
 using VacationMachine.ResultHandler.Interfaces;
 
@@ -40,7 +41,7 @@ namespace VacationMachine.Test
             vacationService.RequestPaidDaysOff(-1, 1);
 
             // Assert
-            databaseMock.Verify(v => v.AddEmployeeHolidays(It.IsAny<long>(), It.IsAny<int>()));
+            databaseMock.Verify(v => v.Save(It.IsAny<EmployeeModel>()));
             messageBusMock.Verify(v => v.SendEvent(It.IsAny<string>()));
         }
 

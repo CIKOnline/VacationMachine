@@ -1,5 +1,6 @@
 ﻿using VacationMachine.Enums;
 using VacationMachine.Interfaces;
+using VacationMachine.Models;
 using VacationMachine.ResultHandler.Interfaces;
 
 namespace VacationMachine.ResultHandler
@@ -13,11 +14,12 @@ namespace VacationMachine.ResultHandler
             _vacationDatabase = vacationDatabase;
         }
 
-        public void Handle(long employeeId, Result result, int daysToTake)
+        public void Handle(EmployeeModel employee, Result result, int daysToTake)
         {
             if (result == Result.Approved)
             {
-                _vacationDatabase.AddEmployeeHolidays(employeeId, daysToTake);
+                employee.TakenHolidays.Add(daysToTake);
+                _vacationDatabase.Save(employee);
             }            
         }
     }

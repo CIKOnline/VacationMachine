@@ -31,10 +31,10 @@ namespace VacationMachine
             }
 
             var employee = _database.FindByEmployeeId(employeeId);
-            var totalDays = employee.TakenHolidays + days;
+            var totalDays = employee.TakenHolidays.Sum() + days;
             var result = _resultCalculator.GetResult(totalDays, employee.Status);
 
-            _resultHandlers.ToList().ForEach(h => h.Handle(employeeId, result, days));
+            _resultHandlers.ToList().ForEach(h => h.Handle(employee, result, days));
 
             return result;
         }
