@@ -1,6 +1,7 @@
 using NSubstitute;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using VacationMachine;
 
 namespace VacationMachineTest
@@ -43,7 +44,8 @@ namespace VacationMachineTest
         }
 
         [Test]
-        public void RequestPaidDaysOff_WhenPerformerAndDaysBelowAcceptanceRequirementRange_ThenApproved()
+        [TestCaseSource(nameof(GetDaysFromTo), new object[] { 1, 26 })]
+        public void RequestPaidDaysOff_WhenPerformerAndDaysBelowAcceptanceRequirementRange_ThenApproved(int days)
         {
             var expectedResult = Result.Approved;
 
@@ -56,14 +58,12 @@ namespace VacationMachineTest
                 };
             });
 
-            for (var days = 1; days <= 26; days++)
-            {
-                RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
-            }
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
         }
 
         [Test]
-        public void RequestPaidDaysOff_WhenPerformerAndDaysInAcceptanceRequirementRange_ThenManual()
+        [TestCaseSource(nameof(GetDaysFromTo), new object[] { 27, 44 })]
+        public void RequestPaidDaysOff_WhenPerformerAndDaysInAcceptanceRequirementRange_ThenManual(int days)
         {
             var expectedResult = Result.Manual;
 
@@ -76,11 +76,8 @@ namespace VacationMachineTest
                 };
             });
 
-            for (var days = 27; days < 45; days++)
-            {
-                RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
-                _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
-            }
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
+            _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
         }
 
         [Test]
@@ -106,7 +103,15 @@ namespace VacationMachineTest
         {
             var actualResult = _sut.RequestPaidDaysOff(days, EMPLOYEE_ID);
 
-            Assert.AreEqual(expectedResult, actualResult, $"Test failed for days = {days}");
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        private static IEnumerable<int> GetDaysFromTo(int firstDay, int lastDay)
+        {
+            for (var days = firstDay; days <= lastDay; days++)
+            {
+                yield return days;
+            }
         }
     }
 }
