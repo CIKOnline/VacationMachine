@@ -34,19 +34,9 @@ namespace VacationMachine
             var totalDays = employee.TakenHolidays + days;
             var result = _resultCalculator.GetResult(totalDays, employee.Status);
 
-            CallServicesByResult(result, employeeId, days);
+            _resultHandlers.ToList().ForEach(h => h.Handle(employeeId, result, days));
 
             return result;
-        }
-
-        private void CallServicesByResult(Result result, long employeeId, int days)
-        {
-            if (result.Equals(Result.Approved))
-            {
-                _database.AddEmployeeHolidays(employeeId, days);
-            }
-
-            _resultHandlers.ToList().ForEach(h => h.Handle(employeeId, result, days));            
         }
     }
 }

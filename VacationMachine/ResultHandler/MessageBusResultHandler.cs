@@ -16,7 +16,7 @@ namespace VacationMachine.ResultHandler
         {
             if (result.Equals(Result.Approved))
             {
-                _messageBus.SendEvent("request approved");
+                _messageBus.SendEvent(Configuration.GetEventText());
             }
         }
     }

@@ -9,18 +9,28 @@ namespace VacationMachine
     {
         static void Main(string[] args)
         {
-            VacationService service = new VacationService(new VacationDatabase(), new ResultCalculator(), GetResultHandlers());
+            VacationService service = GetVacationService();
             var result = service.RequestPaidDaysOff(3, 1);
 
             Console.WriteLine($"Vacation is :{result}");
             Console.ReadKey();
         }
 
-        private static IEnumerable<IResultHandler> GetResultHandlers()
+        private static VacationService GetVacationService()
+        {
+            var database = new VacationDatabase();
+
+            return new VacationService(database, new ResultCalculator(), GetResultHandlers(database));
+        }
+
+        private static IEnumerable<IResultHandler> GetResultHandlers(VacationDatabase database)
         {
             return new List<IResultHandler>()
             {
-                new MessageBusResultHandler(new MessageBus()), new EmailSenderResultHandler(new EmailSender()), new EscalationManagerResultHandler(new EscalationManager()),
+                new VacationDatabaseResultHandler(database),
+                new MessageBusResultHandler(new MessageBus()), 
+                new EmailSenderResultHandler(new EmailSender()), 
+                new EscalationManagerResultHandler(new EscalationManager()),
             };
         }
     }

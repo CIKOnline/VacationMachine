@@ -16,7 +16,7 @@ namespace VacationMachine.ResultHandler
         {
             if (result.Equals(Result.Denied))
             {
-                _emailSender.Send("next time");
+                _emailSender.Send(Configuration.GetEmailText());
             }
         }
     }

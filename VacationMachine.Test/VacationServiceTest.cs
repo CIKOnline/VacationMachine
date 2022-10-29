@@ -76,16 +76,19 @@ namespace VacationMachine.Test
             emailSenderMock.Verify(v => v.NotifyNewPendingRequest(It.IsAny<long>()));
         }
 
-        private VacationService GetVacationService(IVacationDatabase databaseMock, IMessageBus messageBusMock, IEmailSender emailSenderMock, IEscalationManager escalationManagerMock, IResultCalculator resultCalculator)
+        private VacationService GetVacationService(IVacationDatabase database, IMessageBus messageBus, IEmailSender emailSender, IEscalationManager escalationManager, IResultCalculator resultCalculator)
         {
-            return new VacationService(databaseMock, resultCalculator, GetResultHandlers());
+            return new VacationService(database, resultCalculator, GetResultHandlers(database, messageBus, emailSender, escalationManager));
         }
 
-        private IEnumerable<IResultHandler> GetResultHandlers()
+        private IEnumerable<IResultHandler> GetResultHandlers(IVacationDatabase database, IMessageBus messageBus, IEmailSender emailSender, IEscalationManager escalationManager)
         {
             return new List<IResultHandler>()
             {
-                new MessageBusResultHandler(GetMessageBusMock().Object), new EmailSenderResultHandler(GetEmailSenderMock().Object), new EscalationManagerResultHandler(GetEscalationManagerMock().Object),
+                new VacationDatabaseResultHandler(database),
+                new MessageBusResultHandler(messageBus), 
+                new EmailSenderResultHandler(emailSender), 
+                new EscalationManagerResultHandler(escalationManager),
             };
         }
 
