@@ -1,19 +1,21 @@
 ﻿namespace VacationMachine
 {
-    public class SlackerEmployee : Employee
+    public class DeniedRequestResult : IRequestResult
     {
         private readonly IEmailSender _emailSender;
 
-        public SlackerEmployee(
+        public DeniedRequestResult(
             IEmailSender emailSender
         )
         {
             _emailSender = emailSender;
         }
 
-        public override IRequestResult RequestPaidDaysOff(int days)
+        public string Name => "Denied";
+
+        public void ProcessRequest()
         {
-            return new DeniedRequestResult(_emailSender);
+            _emailSender.Send("next time");
         }
     }
 }

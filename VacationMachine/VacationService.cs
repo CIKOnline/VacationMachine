@@ -13,18 +13,21 @@ namespace VacationMachine
             _vacationDatabase = database;
         }
 
-        public Result RequestPaidDaysOff(int days, long employeeId)
+        public string RequestPaidDaysOff(int days, long employeeId)
         {
             var employee = _vacationDatabase.FindByEmployeeId(employeeId);
 
             return RequestPaidDaysOff(days, employee);
         }
 
-        protected Result RequestPaidDaysOff(int days, Employee employee)
+        protected string RequestPaidDaysOff(int days, Employee employee)
         {
             ValidateRequestedDays(days);
 
-            return employee.RequestPaidDaysOff(days);
+            var requestResult = employee.RequestPaidDaysOff(days);
+            requestResult.ProcessRequest();
+
+            return requestResult.Name;
         }
 
         protected void ValidateRequestedDays(int days)

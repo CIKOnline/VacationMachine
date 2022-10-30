@@ -9,6 +9,9 @@ namespace VacationMachineTest
     public class VacationServiceTest
     {
         private const int EMPLOYEE_ID = 1;
+        private const string APPROVED_RESULT = "Approved";
+        private const string MANUAL_RESULT = "Manual";
+        private const string DENIED_RESULT = "Denied";
 
         private VacationServiceFake _sut;
         private IVacationDatabase _vacationDatabase;
@@ -44,7 +47,7 @@ namespace VacationMachineTest
         [TestCaseSource(nameof(GetDaysFromTo), new object[] { 1, 26 })]
         public void RequestPaidDaysOff_WhenPerformerAndDaysBelowAcceptanceRequirementRange_ThenApproved(int days)
         {
-            var expectedResult = Result.Approved;
+            var expectedResult = APPROVED_RESULT;
             var employee = CreatePerformerEmployee();
 
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
@@ -58,7 +61,7 @@ namespace VacationMachineTest
         [TestCaseSource(nameof(GetDaysFromTo), new object[] { 27, 44 })]
         public void RequestPaidDaysOff_WhenPerformerAndDaysInAcceptanceRequirementRange_ThenManual(int days)
         {
-            var expectedResult = Result.Manual;
+            var expectedResult = MANUAL_RESULT;
             var employee = CreatePerformerEmployee();
 
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
@@ -73,7 +76,7 @@ namespace VacationMachineTest
         [TestCase(46)]
         public void RequestPaidDaysOff_WhenPerformerAndDaysAboveAcceptanceRequirementRange_ThenDenied(int days)
         {
-            var expectedResult = Result.Denied;
+            var expectedResult = DENIED_RESULT;
             var employee = CreatePerformerEmployee();
 
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
@@ -87,7 +90,7 @@ namespace VacationMachineTest
         [TestCaseSource(nameof(GetDaysFromTo), new object[] { 1, 26 })]
         public void RequestPaidDaysOff_WhenRegularAndDaysInAcceptedRange_ThenApproved(int days)
         {
-            var expectedResult = Result.Approved;
+            var expectedResult = APPROVED_RESULT;
             var employee = CreateRegularEmployee();
 
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
@@ -104,7 +107,7 @@ namespace VacationMachineTest
         [TestCase(46)]
         public void RequestPaidDaysOff_WhenRegularAndDaysAboveAcceptedRange_ThenDenied(int days)
         {
-            var expectedResult = Result.Denied;
+            var expectedResult = DENIED_RESULT;
             var employee = CreateRegularEmployee();
 
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
@@ -123,7 +126,7 @@ namespace VacationMachineTest
         [TestCase(46)]
         public void RequestPaidDaysOff_WhenSlackerAndAnyDaysRequested_ThenDenied(int days)
         {
-            var expectedResult = Result.Denied;
+            var expectedResult = DENIED_RESULT;
             var employee = CreateSlackerEmployee();
 
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
@@ -139,7 +142,7 @@ namespace VacationMachineTest
         [TestCase(1, 30)]
         public void RequestPaidDaysOff_WhenDaysSoFarPlusRequestedDaysToHeigh_ThenDenied(int days, int daysSoFar)
         {
-            var expectedResult = Result.Denied;
+            var expectedResult = DENIED_RESULT;
             var employee = CreateRegularEmployee(daysSoFar);
 
             RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
@@ -169,14 +172,14 @@ namespace VacationMachineTest
 
         private SlackerEmployee CreateSlackerEmployee(int daysSoFar = 0)
         {
-            return new SlackerEmployee(_vacationDatabase, _messageBus, _emailSender)
+            return new SlackerEmployee(_emailSender)
             {
                 EmployeeId = EMPLOYEE_ID,
                 DaysSoFar = daysSoFar
             };
         }
 
-        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days, Employee employee)
+        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(string expectedResult, int days, Employee employee)
         {
             var actualResult = _sut.RequestPaidDaysOff(days, employee);
 
@@ -199,7 +202,7 @@ namespace VacationMachineTest
             {
             }
 
-            public new Result RequestPaidDaysOff(int days, Employee employee)
+            public new string RequestPaidDaysOff(int days, Employee employee)
             {
                 return base.RequestPaidDaysOff(days, employee);
             }

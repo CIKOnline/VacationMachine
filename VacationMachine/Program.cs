@@ -8,7 +8,6 @@ namespace VacationMachine
         {
             var vacationService = new VacationService(
                 new VacationDatabase(
-                    new MessageBus(),
                     new EmailSender()
                 )
             );

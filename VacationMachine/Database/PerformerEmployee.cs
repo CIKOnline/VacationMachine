@@ -2,6 +2,9 @@
 {
     public class PerformerEmployee : Employee
     {
+        private readonly IVacationDatabase _vacationDatabase;
+        private readonly IMessageBus _messageBus;
+        private readonly IEmailSender _emailSender;
         private readonly IEscalationManager _escalationManager;
 
         public PerformerEmployee(
@@ -9,31 +12,26 @@
             IMessageBus messageBus,
             IEmailSender emailSender,
             IEscalationManager escalationManager
-        ) : base(vacationDatabase, messageBus, emailSender)
+        )
         {
+            _vacationDatabase = vacationDatabase;
+            _messageBus = messageBus;
+            _emailSender = emailSender;
             _escalationManager = escalationManager;
         }
 
-        public override Result RequestPaidDaysOff(int days)
+        public override IRequestResult RequestPaidDaysOff(int days)
         {
             var newDaysSoFar = DaysSoFar + days;
             if (newDaysSoFar <= 26)
             {
-                ApprovePaidDaysOff(days);
-                return Result.Approved;
+                return new ApprovedRequestResult(_vacationDatabase, _messageBus, this, days);
             }
             else if (newDaysSoFar < 45)
             {
-                ManualPaidDaysOff();
-                return Result.Manual;
+                return new ManualRequestResult(_escalationManager, EmployeeId);
             }
-            DeniePaidDaysOff();
-            return Result.Denied;
-        }
-
-        private void ManualPaidDaysOff()
-        {
-            _escalationManager.NotifyNewPendingRequest(EmployeeId);
+            return new DeniedRequestResult(_emailSender);
         }
     }
 }
