@@ -17,7 +17,7 @@ namespace VacationMachine.Business
 
         public override IRequestResult RequestPaidDaysOff(int days)
         {
-            return new DeniedRequestResult(_emailSender);
+            return new DeniedRequestResult(this, _emailSender);
         }
     }
 }

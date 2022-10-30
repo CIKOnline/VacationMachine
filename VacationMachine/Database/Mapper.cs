@@ -41,8 +41,6 @@ namespace VacationMachine
             {
                 case EmployeeStatus.Performer:
                     businessEmployee = new PerformerEmployee(
-                        _vacationDatabase,
-                        this,
                         _messageBus,
                         _emailSender,
                         _escalationManager

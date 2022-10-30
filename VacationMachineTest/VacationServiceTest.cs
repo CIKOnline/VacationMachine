@@ -152,7 +152,7 @@ namespace VacationMachineTest
 
         private PerformerEmployee CreatePerformerEmployee(int daysSoFar = 0)
         {
-            return new PerformerEmployee(_vacationDatabase, _mapper, _messageBus, _emailSender, _escalationManager)
+            return new PerformerEmployee(_messageBus, _emailSender, _escalationManager)
             {
                 EmployeeId = EMPLOYEE_ID,
                 DaysSoFar = daysSoFar

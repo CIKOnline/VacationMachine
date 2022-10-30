@@ -18,20 +18,29 @@ namespace VacationMachine
 
         public string RequestPaidDaysOff(int days, long employeeId)
         {
-            var domainEmployee = _vacationDatabase.FindByEmployeeId(employeeId);
-            var employee = _mapper.ToBusiness(domainEmployee);
+            ValidateRequestedDays(days);
 
-            return RequestPaidDaysOff(days, employee);
+            lock (_vacationDatabase)
+            {
+                var domainEmployee = _vacationDatabase.FindByEmployeeId(employeeId);
+                var employee = _mapper.ToBusiness(domainEmployee);
+
+                return RequestPaidDaysOff(days, employee);
+            }
         }
 
         protected string RequestPaidDaysOff(int days, Business.Employee employee)
         {
-            ValidateRequestedDays(days);
-
             var requestResult = employee.RequestPaidDaysOff(days);
             requestResult.ProcessRequest();
 
-            return requestResult.Name;
+            if (requestResult.IsEmployeeChanged)
+            {
+                var domainEmployee = _mapper.ToDomain(requestResult.Employee);
+                _vacationDatabase.Save(domainEmployee);
+            }
+
+            return requestResult.StatusMessage;
         }
 
         protected void ValidateRequestedDays(int days)

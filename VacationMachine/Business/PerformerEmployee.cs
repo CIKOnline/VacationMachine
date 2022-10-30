@@ -6,22 +6,16 @@ namespace VacationMachine.Business
     {
         public override EmployeeStatus Status => EmployeeStatus.Performer;
 
-        private readonly IVacationDatabase _vacationDatabase;
-        private readonly IMapper _mapper;
         private readonly IMessageBus _messageBus;
         private readonly IEmailSender _emailSender;
         private readonly IEscalationManager _escalationManager;
 
         public PerformerEmployee(
-            IVacationDatabase vacationDatabase,
-            IMapper mapper,
             IMessageBus messageBus,
             IEmailSender emailSender,
             IEscalationManager escalationManager
         )
         {
-            _vacationDatabase = vacationDatabase;
-            _mapper = mapper;
             _messageBus = messageBus;
             _emailSender = emailSender;
             _escalationManager = escalationManager;
@@ -32,13 +26,13 @@ namespace VacationMachine.Business
             var newDaysSoFar = DaysSoFar + days;
             if (newDaysSoFar <= Configuration.MAX_DAYS)
             {
-                return new ApprovedRequestResult(_vacationDatabase, _mapper, _messageBus, this, days);
+                return new ApprovedRequestResult(this, _messageBus, days);
             }
             else if (newDaysSoFar <= Configuration.MAX_DAYS_FOR_PERFORMERS)
             {
-                return new ManualRequestResult(_escalationManager, EmployeeId);
+                return new ManualRequestResult(this, _escalationManager);
             }
-            return new DeniedRequestResult(_emailSender);
+            return new DeniedRequestResult(this, _emailSender);
         }
     }
 }

@@ -28,9 +28,9 @@ namespace VacationMachine.Business
         {
             if (DaysSoFar + days <= Configuration.MAX_DAYS)
             {
-                return new ApprovedRequestResult(_vacationDatabase, _mapper, _messageBus, this, days);
+                return new ApprovedRequestResult(this, _messageBus, days);
             }
-            return new DeniedRequestResult(_emailSender);
+            return new DeniedRequestResult(this, _emailSender);
         }
     }
 }

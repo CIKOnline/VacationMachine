@@ -1,24 +1,29 @@
-﻿namespace VacationMachine
+﻿using VacationMachine.Business;
+
+namespace VacationMachine
 {
     public class ManualRequestResult : IRequestResult
     {
         private readonly IEscalationManager _escalationManager;
-        private readonly long _employeeId;
 
         public ManualRequestResult(
-            IEscalationManager escalationManager,
-            long employeeId
+            Employee employee,
+            IEscalationManager escalationManager
         )
         {
+            Employee = employee;
             _escalationManager = escalationManager;
-            _employeeId = employeeId;
         }
 
-        public string Name => "Manual";
+        public string StatusMessage => "Manual";
+
+        public Employee Employee { get; private set; }
+
+        public bool IsEmployeeChanged => false;
 
         public void ProcessRequest()
         {
-            _escalationManager.NotifyNewPendingRequest(_employeeId);
+            _escalationManager.NotifyNewPendingRequest(Employee.EmployeeId);
         }
     }
 }
