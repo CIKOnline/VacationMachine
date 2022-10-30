@@ -10,7 +10,7 @@ namespace VacationMachineTest
     {
         private const int EMPLOYEE_ID = 1;
 
-        private VacationService _sut;
+        private VacationServiceFake _sut;
         private IVacationDatabase _vacationDatabase;
         private IMessageBus _messageBus;
         private IEmailSender _emailSender;
@@ -24,7 +24,7 @@ namespace VacationMachineTest
             _emailSender = Substitute.For<IEmailSender>();
             _escalationManager = Substitute.For<IEscalationManager>();
 
-            _sut = new VacationService(
+            _sut = new VacationServiceFake(
                 _vacationDatabase,
                 _messageBus,
                 _emailSender,
@@ -35,11 +35,11 @@ namespace VacationMachineTest
         [Test]
         [TestCase(0)]
         [TestCase(-1)]
-        public void RequestPaidDaysOff_WhenDaysToLow_ThenArgumentException(int days)
+        public void ValidateRequestedDays_WhenDaysToLow_ThenArgumentException(int days)
         {
             var expectedMessage = $"Invalid amount of days: {days}";
 
-            var exception = Assert.Throws<ArgumentException>(() => _sut.RequestPaidDaysOff(days, EMPLOYEE_ID));
+            var exception = Assert.Throws<ArgumentException>(() => _sut.ValidateRequestedDays(days));
             Assert.AreEqual(expectedMessage, exception.Message);
         }
 
@@ -147,16 +147,14 @@ namespace VacationMachineTest
 
         private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days, EmployeeStatus employeeStatus, int daysSoFar = 0)
         {
-            _vacationDatabase.FindByEmployeeId(EMPLOYEE_ID).Returns(callInfo =>
+            var employee = new Employee
             {
-                return new Employee
-                {
-                    Status = employeeStatus,
-                    DaysSoFar = daysSoFar
-                };
-            });
+                EmployeeId = EMPLOYEE_ID,
+                Status = employeeStatus,
+                DaysSoFar = daysSoFar
+            };
 
-            var actualResult = _sut.RequestPaidDaysOff(days, EMPLOYEE_ID);
+            var actualResult = _sut.RequestPaidDaysOff(days, employee);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -166,6 +164,28 @@ namespace VacationMachineTest
             for (var days = firstDay; days <= lastDay; days++)
             {
                 yield return days;
+            }
+        }
+
+        private class VacationServiceFake : VacationService
+        {
+            public VacationServiceFake(
+                IVacationDatabase database,
+                IMessageBus messageBus,
+                IEmailSender emailSender,
+                IEscalationManager escalationManager
+            ) : base(database, messageBus, emailSender, escalationManager)
+            {
+            }
+
+            public new Result RequestPaidDaysOff(int days, Employee employee)
+            {
+                return base.RequestPaidDaysOff(days, employee);
+            }
+
+            public new void ValidateRequestedDays(int days)
+            {
+                base.ValidateRequestedDays(days);
             }
         }
     }

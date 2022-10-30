@@ -24,44 +24,51 @@ namespace VacationMachine
 
         public Result RequestPaidDaysOff(int days, long employeeId)
         {
-            if (days <= 0)
-            {
-                throw new ArgumentException($"Invalid amount of days: {days}");
-            }
-
-            Result result;
             var employee = _vacationDatabase.FindByEmployeeId(employeeId);
+
+            return RequestPaidDaysOff(days, employee);
+        }
+
+        protected Result RequestPaidDaysOff(int days, Employee employee)
+        {
+            ValidateRequestedDays(days);
 
             if (employee.DaysSoFar + days > 26)
             {
                 if (employee.Status.Equals(EmployeeStatus.Performer) && employee.DaysSoFar + days < 45)
                 {
-                    result = Result.Manual;
-                    _escalationManager.NotifyNewPendingRequest(employeeId);
+                    _escalationManager.NotifyNewPendingRequest(employee.EmployeeId);
+                    return Result.Manual;
                 }
                 else
                 {
-                    result = Result.Denied;
                     _emailSender.Send("next time");
+                    return Result.Denied;
                 }
             }
             else
             {
                 if (employee.Status.Equals(EmployeeStatus.Slacker))
                 {
-                    result = Result.Denied;
                     _emailSender.Send("next time");
+                    return Result.Denied;
                 }
                 else
                 {
                     employee.DaysSoFar += days;
-                    result = Result.Approved;
                     _vacationDatabase.Save(employee);
                     _messageBus.SendEvent("request approved");
+                    return Result.Approved;
                 }
             }
+        }
 
-            return result;
+        protected void ValidateRequestedDays(int days)
+        {
+            if (days <= 0)
+            {
+                throw new ArgumentException($"Invalid amount of days: {days}");
+            }
         }
     }
 }
