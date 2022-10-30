@@ -1,23 +1,22 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
 using VacationMachine;
-using VacationMachine.Business;
 
 namespace VacationMachineTest.RequestResult
 {
-    public class ManualRequestResultTest
+    public class ManualVacationRequestTest
     {
-        private Employee _employee;
+        private VacationMachine.Business.Employee _employee;
         private IEscalationManager _esscalationManager;
-        private ManualRequestResult _sut;
+        private ManualVacationRequest _sut;
 
         [SetUp]
         public void Initialize()
         {
-            _employee = Substitute.For<Employee>();
+            _employee = Substitute.For<VacationMachine.Business.Employee>();
             _esscalationManager = Substitute.For<IEscalationManager>();
 
-            _sut = new ManualRequestResult(_employee, _esscalationManager);
+            _sut = new ManualVacationRequest(_employee, _esscalationManager);
         }
 
         [Test]

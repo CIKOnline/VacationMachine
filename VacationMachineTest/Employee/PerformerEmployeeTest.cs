@@ -3,7 +3,7 @@ using NUnit.Framework;
 using VacationMachine;
 using VacationMachine.Business;
 
-namespace VacationMachineTest.Business
+namespace VacationMachineTest.Employee
 {
     public class PerformerEmployeeTest
     {
@@ -26,7 +26,7 @@ namespace VacationMachineTest.Business
         [TestCaseSource(typeof(TestCaseHelper), nameof(TestCaseHelper.GetDaysFromTo), new object[] { 1, Configuration.MAX_DAYS })]
         public void RequestPaidDaysOff_WhenDaysBelowMaxDaysRequested_ThenApproved(int days)
         {
-            var expectedResult = typeof(ApprovedRequestResult);
+            var expectedResult = typeof(ApprovedVacationRequest);
 
             var actualResult = _sut.RequestPaidDaysOff(days).GetType();
 
@@ -37,7 +37,7 @@ namespace VacationMachineTest.Business
         [TestCaseSource(typeof(TestCaseHelper), nameof(TestCaseHelper.GetDaysFromTo), new object[] { Configuration.MAX_DAYS + 1, Configuration.MAX_DAYS_FOR_PERFORMERS })]
         public void RequestPaidDaysOff_WhenDaysAboveMaxDaysAndBelowMaxDaysForPerformesRequested_ThenManual(int days)
         {
-            var expectedResult = typeof(ManualRequestResult);
+            var expectedResult = typeof(ManualVacationRequest);
 
             var actualResult = _sut.RequestPaidDaysOff(days).GetType();
 
@@ -48,7 +48,7 @@ namespace VacationMachineTest.Business
         [TestCase(Configuration.MAX_DAYS_FOR_PERFORMERS + 1)]
         public void RequestPaidDaysOff_WhenDaysAboveMaxDaysForPerformesRequested_ThenDenied(int days)
         {
-            var expectedResult = typeof(DeniedRequestResult);
+            var expectedResult = typeof(DeniedVacationRequest);
 
             var actualResult = _sut.RequestPaidDaysOff(days).GetType();
 

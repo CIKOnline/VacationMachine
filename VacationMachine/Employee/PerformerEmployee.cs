@@ -21,18 +21,18 @@ namespace VacationMachine.Business
             _escalationManager = escalationManager;
         }
 
-        public override IRequestResult RequestPaidDaysOff(int days)
+        public override IVacationRequest RequestPaidDaysOff(int days)
         {
             var newDaysSoFar = DaysSoFar + days;
             if (newDaysSoFar <= Configuration.MAX_DAYS)
             {
-                return new ApprovedRequestResult(this, _messageBus, days);
+                return new ApprovedVacationRequest(this, _messageBus, days);
             }
             else if (newDaysSoFar <= Configuration.MAX_DAYS_FOR_PERFORMERS)
             {
-                return new ManualRequestResult(this, _escalationManager);
+                return new ManualVacationRequest(this, _escalationManager);
             }
-            return new DeniedRequestResult(this, _emailSender);
+            return new DeniedVacationRequest(this, _emailSender);
         }
     }
 }

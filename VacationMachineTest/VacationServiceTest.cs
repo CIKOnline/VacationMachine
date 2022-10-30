@@ -8,19 +8,13 @@ namespace VacationMachineTest
     public class VacationServiceTest
     {
         private VacationServiceFake _sut;
-        private IVacationDatabase _vacationDatabase;
-        private IEmployeeMapper _mapper;
 
         [SetUp]
         public void Initialize()
         {
-            _vacationDatabase = Substitute.For<IVacationDatabase>();
-            _mapper = Substitute.For<IEmployeeMapper>();
+            var employeeManager = Substitute.For<IEmployeeManager>();
 
-            _sut = new VacationServiceFake(
-                _vacationDatabase,
-                _mapper
-            );
+            _sut = new VacationServiceFake(employeeManager);
         }
 
         [Test]
@@ -43,10 +37,7 @@ namespace VacationMachineTest
 
         private class VacationServiceFake : VacationService
         {
-            public VacationServiceFake(
-                IVacationDatabase vacationDatabase,
-                IEmployeeMapper mapper
-            ) : base(vacationDatabase, mapper)
+            public VacationServiceFake(IEmployeeManager employeeManager) : base(employeeManager)
             {
             }
 

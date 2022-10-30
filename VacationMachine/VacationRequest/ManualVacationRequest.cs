@@ -2,11 +2,15 @@
 
 namespace VacationMachine
 {
-    public class ManualRequestResult : IRequestResult
+    public class ManualVacationRequest : IVacationRequest
     {
         private readonly IEscalationManager _escalationManager;
 
-        public ManualRequestResult(
+        public string StatusMessage => Configuration.STATUS_MESSAGE_MANUAL;
+        public Employee Employee { get; private set; }
+        public bool IsEmployeeUpdated => false;
+
+        public ManualVacationRequest(
             Employee employee,
             IEscalationManager escalationManager
         )
@@ -14,12 +18,6 @@ namespace VacationMachine
             Employee = employee;
             _escalationManager = escalationManager;
         }
-
-        public string StatusMessage => Configuration.STATUS_MESSAGE_MANUAL;
-
-        public Employee Employee { get; private set; }
-
-        public bool IsEmployeeChanged => false;
 
         public void ProcessRequest()
         {

@@ -1,46 +1,38 @@
 ﻿using System;
+using VacationMachine.Business;
 
 namespace VacationMachine
 {
     public class VacationService
     {
-        private readonly IVacationDatabase _vacationDatabase;
-        private readonly IEmployeeMapper _mapper;
+        private readonly IEmployeeManager _employeeManager;
 
-        public VacationService(
-            IVacationDatabase vacationDatabase,
-            IEmployeeMapper mapper
-        )
+        public VacationService(IEmployeeManager employeeManager)
         {
-            _vacationDatabase = vacationDatabase;
-            _mapper = mapper;
+            _employeeManager = employeeManager;
         }
 
         public string RequestPaidDaysOff(int days, long employeeId)
         {
             ValidateRequestedDays(days);
 
-            lock (_vacationDatabase)
-            {
-                var domainEmployee = _vacationDatabase.FindByEmployeeId(employeeId);
-                var employee = _mapper.ToBusiness(domainEmployee);
+            Employee employee = _employeeManager.FindByEmployeeId(employeeId);
 
-                return RequestPaidDaysOff(days, employee);
-            }
+            return RequestPaidDaysOff(days, employee);
         }
 
-        private string RequestPaidDaysOff(int days, Business.Employee employee)
+        private string RequestPaidDaysOff(int days, Employee employee)
         {
-            var requestResult = employee.RequestPaidDaysOff(days);
-            requestResult.ProcessRequest();
+            var vacationRequest = employee.RequestPaidDaysOff(days);
 
-            if (requestResult.IsEmployeeChanged)
+            vacationRequest.ProcessRequest();
+
+            if (vacationRequest.IsEmployeeUpdated)
             {
-                var domainEmployee = _mapper.ToDomain(requestResult.Employee);
-                _vacationDatabase.Save(domainEmployee);
+                _employeeManager.SaveEmployee(vacationRequest.Employee);
             }
 
-            return requestResult.StatusMessage;
+            return vacationRequest.StatusMessage;
         }
 
         protected void ValidateRequestedDays(int days)

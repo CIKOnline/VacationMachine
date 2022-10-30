@@ -8,6 +8,6 @@ namespace VacationMachine.Business
         public long EmployeeId { get; set; }
         public int DaysSoFar { get; set; }
 
-        public abstract IRequestResult RequestPaidDaysOff(int days);
+        public abstract IVacationRequest RequestPaidDaysOff(int days);
     }
 }

@@ -16,7 +16,7 @@ namespace VacationMachine
 
         private static VacationService CreateVacationService()
         {
-            return new VacationService(
+            var employeeManager = new EmployeeManager(
                 new VacationDatabase(),
                 new EmployeeMapper(
                     new MessageBus(),
@@ -24,6 +24,8 @@ namespace VacationMachine
                     new EscalationManager()
                 )
             );
+
+            return new VacationService(employeeManager);
         }
     }
 }

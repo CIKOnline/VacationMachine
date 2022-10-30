@@ -1,25 +1,24 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
 using VacationMachine;
-using VacationMachine.Business;
 
 namespace VacationMachineTest.RequestResult
 {
-    public class ApprovedRequestResultTest
+    public class ApprovedVacationRequestTest
     {
         private const int ADDED_DAYS = 5;
 
-        private Employee _employee;
+        private VacationMachine.Business.Employee _employee;
         private IMessageBus _messageBus;
-        private ApprovedRequestResult _sut;
+        private ApprovedVacationRequest _sut;
 
         [SetUp]
         public void Initialize()
         {
-            _employee = Substitute.For<Employee>();
+            _employee = Substitute.For<VacationMachine.Business.Employee>();
             _messageBus = Substitute.For<IMessageBus>();
 
-            _sut = new ApprovedRequestResult(_employee, _messageBus, ADDED_DAYS);
+            _sut = new ApprovedVacationRequest(_employee, _messageBus, ADDED_DAYS);
         }
 
         [Test]

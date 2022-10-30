@@ -15,9 +15,9 @@ namespace VacationMachine.Business
             _emailSender = emailSender;
         }
 
-        public override IRequestResult RequestPaidDaysOff(int days)
+        public override IVacationRequest RequestPaidDaysOff(int days)
         {
-            return new DeniedRequestResult(this, _emailSender);
+            return new DeniedVacationRequest(this, _emailSender);
         }
     }
 }

@@ -2,13 +2,13 @@
 
 namespace VacationMachine
 {
-    public interface IRequestResult
+    public interface IVacationRequest
     {
         public Employee Employee { get; }
 
         public string StatusMessage { get; }
 
-        public bool IsEmployeeChanged { get; }
+        public bool IsEmployeeUpdated { get; }
 
         public void ProcessRequest();
     }

@@ -3,7 +3,7 @@ using NUnit.Framework;
 using VacationMachine;
 using VacationMachine.Business;
 
-namespace VacationMachineTest.Business
+namespace VacationMachineTest.Employee
 {
     public class SlackerEmployeeTest
     {
@@ -25,7 +25,7 @@ namespace VacationMachineTest.Business
         [TestCase(Configuration.MAX_DAYS_FOR_PERFORMERS + 1)]
         public void RequestPaidDaysOff_WhenAnyDaysRequested_ThenDenied(int days)
         {
-            var expectedResult = typeof(DeniedRequestResult);
+            var expectedResult = typeof(DeniedVacationRequest);
 
             var actualResult = _sut.RequestPaidDaysOff(days).GetType();
 

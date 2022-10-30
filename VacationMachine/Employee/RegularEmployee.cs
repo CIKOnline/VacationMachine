@@ -18,13 +18,13 @@ namespace VacationMachine.Business
             _emailSender = emailSender;
         }
 
-        public override IRequestResult RequestPaidDaysOff(int days)
+        public override IVacationRequest RequestPaidDaysOff(int days)
         {
             if (DaysSoFar + days <= Configuration.MAX_DAYS)
             {
-                return new ApprovedRequestResult(this, _messageBus, days);
+                return new ApprovedVacationRequest(this, _messageBus, days);
             }
-            return new DeniedRequestResult(this, _emailSender);
+            return new DeniedVacationRequest(this, _emailSender);
         }
     }
 }

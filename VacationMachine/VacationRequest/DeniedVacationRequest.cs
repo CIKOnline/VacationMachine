@@ -2,11 +2,16 @@
 
 namespace VacationMachine
 {
-    public class DeniedRequestResult : IRequestResult
+    public class DeniedVacationRequest : IVacationRequest
     {
         private readonly IEmailSender _emailSender;
 
-        public DeniedRequestResult(
+        public string StatusMessage => Configuration.STATUS_MESSAGE_DENIED;
+        public Employee Employee { get; private set; }
+
+        public bool IsEmployeeUpdated => false;
+
+        public DeniedVacationRequest(
             Employee employe,
             IEmailSender emailSender
         )
@@ -14,12 +19,6 @@ namespace VacationMachine
             Employee = employe;
             _emailSender = emailSender;
         }
-
-        public string StatusMessage => Configuration.STATUS_MESSAGE_DENIED;
-
-        public Employee Employee { get; private set; }
-
-        public bool IsEmployeeChanged => false;
 
         public void ProcessRequest()
         {

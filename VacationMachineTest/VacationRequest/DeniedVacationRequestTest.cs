@@ -1,23 +1,22 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
 using VacationMachine;
-using VacationMachine.Business;
 
 namespace VacationMachineTest.RequestResult
 {
-    public class DeniedRequestResultTest
+    public class DeniedVacationRequestTest
     {
-        private Employee _employee;
+        private VacationMachine.Business.Employee _employee;
         private IEmailSender _emailSender;
-        private DeniedRequestResult _sut;
+        private DeniedVacationRequest _sut;
 
         [SetUp]
         public void Initialize()
         {
-            _employee = Substitute.For<Employee>();
+            _employee = Substitute.For<VacationMachine.Business.Employee>();
             _emailSender = Substitute.For<IEmailSender>();
 
-            _sut = new DeniedRequestResult(_employee, _emailSender);
+            _sut = new DeniedVacationRequest(_employee, _emailSender);
         }
 
         [Test]
