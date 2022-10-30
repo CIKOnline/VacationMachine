@@ -3,7 +3,7 @@ using NUnit.Framework;
 using VacationMachine;
 using VacationMachine.Business;
 
-namespace VacationMachineTest
+namespace VacationMachineTest.Business
 {
     public class PerformerEmployeeTest
     {
