@@ -7,10 +7,10 @@ namespace VacationMachine
         private static void Main()
         {
             var vacationService = new VacationService(
-                new VacationDatabase(),
-                new MessageBus(),
-                new EmailSender(),
-                new EscalationManager()
+                new VacationDatabase(
+                    new MessageBus(),
+                    new EmailSender()
+                )
             );
 
             var result = vacationService.RequestPaidDaysOff(3, 1);

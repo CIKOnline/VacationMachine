@@ -25,10 +25,7 @@ namespace VacationMachineTest
             _escalationManager = Substitute.For<IEscalationManager>();
 
             _sut = new VacationServiceFake(
-                _vacationDatabase,
-                _messageBus,
-                _emailSender,
-                _escalationManager
+                _vacationDatabase
             );
         }
 
@@ -48,8 +45,9 @@ namespace VacationMachineTest
         public void RequestPaidDaysOff_WhenPerformerAndDaysBelowAcceptanceRequirementRange_ThenApproved(int days)
         {
             var expectedResult = Result.Approved;
+            var employee = CreatePerformerEmployee();
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Performer);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
             _vacationDatabase.ReceivedWithAnyArgs(1).Save(default);
             _messageBus.Received(1).SendEvent("request approved");
             _emailSender.DidNotReceiveWithAnyArgs().Send(default);
@@ -61,8 +59,9 @@ namespace VacationMachineTest
         public void RequestPaidDaysOff_WhenPerformerAndDaysInAcceptanceRequirementRange_ThenManual(int days)
         {
             var expectedResult = Result.Manual;
+            var employee = CreatePerformerEmployee();
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Performer);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
             _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
             _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
             _emailSender.DidNotReceiveWithAnyArgs().Send(default);
@@ -75,8 +74,9 @@ namespace VacationMachineTest
         public void RequestPaidDaysOff_WhenPerformerAndDaysAboveAcceptanceRequirementRange_ThenDenied(int days)
         {
             var expectedResult = Result.Denied;
+            var employee = CreatePerformerEmployee();
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Performer);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
             _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
             _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
             _emailSender.Received(1).Send("next time");
@@ -88,8 +88,9 @@ namespace VacationMachineTest
         public void RequestPaidDaysOff_WhenRegularAndDaysInAcceptedRange_ThenApproved(int days)
         {
             var expectedResult = Result.Approved;
+            var employee = CreateRegularEmployee();
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Regular);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
             _vacationDatabase.ReceivedWithAnyArgs(1).Save(default);
             _messageBus.Received(1).SendEvent("request approved");
             _emailSender.DidNotReceiveWithAnyArgs().Send(default);
@@ -104,8 +105,9 @@ namespace VacationMachineTest
         public void RequestPaidDaysOff_WhenRegularAndDaysAboveAcceptedRange_ThenDenied(int days)
         {
             var expectedResult = Result.Denied;
+            var employee = CreateRegularEmployee();
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Regular);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
             _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
             _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
             _emailSender.Received(1).Send("next time");
@@ -122,8 +124,9 @@ namespace VacationMachineTest
         public void RequestPaidDaysOff_WhenSlackerAndAnyDaysRequested_ThenDenied(int days)
         {
             var expectedResult = Result.Denied;
+            var employee = CreateSlackerEmployee();
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Slacker);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
             _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
             _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
             _emailSender.Received(1).Send("next time");
@@ -137,23 +140,44 @@ namespace VacationMachineTest
         public void RequestPaidDaysOff_WhenDaysSoFarPlusRequestedDaysToHeigh_ThenDenied(int days, int daysSoFar)
         {
             var expectedResult = Result.Denied;
+            var employee = CreateRegularEmployee(daysSoFar);
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Regular, daysSoFar);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, employee);
             _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
             _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
             _emailSender.Received(1).Send("next time");
             _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
         }
 
-        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days, EmployeeStatus employeeStatus, int daysSoFar = 0)
+        private PerformerEmployee CreatePerformerEmployee(int daysSoFar = 0)
         {
-            var employee = new Employee
+            return new PerformerEmployee(_vacationDatabase, _messageBus, _emailSender, _escalationManager)
             {
                 EmployeeId = EMPLOYEE_ID,
-                Status = employeeStatus,
                 DaysSoFar = daysSoFar
             };
+        }
 
+        private RegularEmployee CreateRegularEmployee(int daysSoFar = 0)
+        {
+            return new RegularEmployee(_vacationDatabase, _messageBus, _emailSender)
+            {
+                EmployeeId = EMPLOYEE_ID,
+                DaysSoFar = daysSoFar
+            };
+        }
+
+        private SlackerEmployee CreateSlackerEmployee(int daysSoFar = 0)
+        {
+            return new SlackerEmployee(_vacationDatabase, _messageBus, _emailSender)
+            {
+                EmployeeId = EMPLOYEE_ID,
+                DaysSoFar = daysSoFar
+            };
+        }
+
+        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days, Employee employee)
+        {
             var actualResult = _sut.RequestPaidDaysOff(days, employee);
 
             Assert.AreEqual(expectedResult, actualResult);
@@ -170,11 +194,8 @@ namespace VacationMachineTest
         private class VacationServiceFake : VacationService
         {
             public VacationServiceFake(
-                IVacationDatabase database,
-                IMessageBus messageBus,
-                IEmailSender emailSender,
-                IEscalationManager escalationManager
-            ) : base(database, messageBus, emailSender, escalationManager)
+                IVacationDatabase database
+            ) : base(database)
             {
             }
 
