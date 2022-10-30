@@ -26,7 +26,7 @@ namespace VacationMachine.Business
 
         public override IRequestResult RequestPaidDaysOff(int days)
         {
-            if (DaysSoFar + days <= 26)
+            if (DaysSoFar + days <= Configuration.MAX_DAYS)
             {
                 return new ApprovedRequestResult(_vacationDatabase, _mapper, _messageBus, this, days);
             }

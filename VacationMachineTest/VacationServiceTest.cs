@@ -32,9 +32,6 @@ namespace VacationMachineTest
 
             _sut = new VacationServiceFake(
                 _vacationDatabase,
-                _messageBus,
-                _emailSender,
-                _escalationManager,
                 _mapper
             );
         }
@@ -51,7 +48,7 @@ namespace VacationMachineTest
         }
 
         [Test]
-        [TestCaseSource(nameof(GetDaysFromTo), new object[] { 1, 26 })]
+        [TestCaseSource(nameof(GetDaysFromTo), new object[] { 1, Configuration.MAX_DAYS })]
         public void RequestPaidDaysOff_WhenPerformerAndDaysBelowAcceptanceRequirementRange_ThenApproved(int days)
         {
             var expectedResult = APPROVED_RESULT;
@@ -65,7 +62,7 @@ namespace VacationMachineTest
         }
 
         [Test]
-        [TestCaseSource(nameof(GetDaysFromTo), new object[] { 27, 44 })]
+        [TestCaseSource(nameof(GetDaysFromTo), new object[] { Configuration.MAX_DAYS + 1, Configuration.MAX_DAYS_FOR_PERFORMERS })]
         public void RequestPaidDaysOff_WhenPerformerAndDaysInAcceptanceRequirementRange_ThenManual(int days)
         {
             var expectedResult = MANUAL_RESULT;
@@ -79,8 +76,7 @@ namespace VacationMachineTest
         }
 
         [Test]
-        [TestCase(45)]
-        [TestCase(46)]
+        [TestCase(Configuration.MAX_DAYS_FOR_PERFORMERS + 1)]
         public void RequestPaidDaysOff_WhenPerformerAndDaysAboveAcceptanceRequirementRange_ThenDenied(int days)
         {
             var expectedResult = DENIED_RESULT;
@@ -94,7 +90,7 @@ namespace VacationMachineTest
         }
 
         [Test]
-        [TestCaseSource(nameof(GetDaysFromTo), new object[] { 1, 26 })]
+        [TestCaseSource(nameof(GetDaysFromTo), new object[] { 1, Configuration.MAX_DAYS })]
         public void RequestPaidDaysOff_WhenRegularAndDaysInAcceptedRange_ThenApproved(int days)
         {
             var expectedResult = APPROVED_RESULT;
@@ -108,10 +104,8 @@ namespace VacationMachineTest
         }
 
         [Test]
-        [TestCase(27)]
-        [TestCase(28)]
-        [TestCase(45)]
-        [TestCase(46)]
+        [TestCase(Configuration.MAX_DAYS + 1)]
+        [TestCase(Configuration.MAX_DAYS_FOR_PERFORMERS + 1)]
         public void RequestPaidDaysOff_WhenRegularAndDaysAboveAcceptedRange_ThenDenied(int days)
         {
             var expectedResult = DENIED_RESULT;
@@ -126,11 +120,9 @@ namespace VacationMachineTest
 
         [Test]
         [TestCase(1)]
-        [TestCase(2)]
-        [TestCase(27)]
-        [TestCase(28)]
-        [TestCase(45)]
-        [TestCase(46)]
+        [TestCase(Configuration.MAX_DAYS)]
+        [TestCase(Configuration.MAX_DAYS + 1)]
+        [TestCase(Configuration.MAX_DAYS_FOR_PERFORMERS + 1)]
         public void RequestPaidDaysOff_WhenSlackerAndAnyDaysRequested_ThenDenied(int days)
         {
             var expectedResult = DENIED_RESULT;
@@ -144,9 +136,8 @@ namespace VacationMachineTest
         }
 
         [Test]
-        [TestCase(17, 10)]
-        [TestCase(18, 10)]
-        [TestCase(1, 30)]
+        [TestCase(1, Configuration.MAX_DAYS)]
+        [TestCase(2, Configuration.MAX_DAYS - 1)]
         public void RequestPaidDaysOff_WhenDaysSoFarPlusRequestedDaysToHeigh_ThenDenied(int days, int daysSoFar)
         {
             var expectedResult = DENIED_RESULT;
@@ -205,11 +196,8 @@ namespace VacationMachineTest
         {
             public VacationServiceFake(
                 IVacationDatabase vacationDatabase,
-                IMessageBus messageBus,
-                IEmailSender emailSender,
-                IEscalationManager escalationManager,
                 IMapper mapper
-            ) : base(vacationDatabase, messageBus, emailSender, escalationManager, mapper)
+            ) : base(vacationDatabase, mapper)
             {
             }
 

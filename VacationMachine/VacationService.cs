@@ -5,22 +5,14 @@ namespace VacationMachine
     public class VacationService
     {
         private readonly IVacationDatabase _vacationDatabase;
-        private readonly IMessageBus _messageBus;
-        private readonly IEmailSender _emailSender;
-        private readonly IEscalationManager _escalationManager;
         private readonly IMapper _mapper;
 
         public VacationService(
             IVacationDatabase vacationDatabase,
-            IMessageBus messageBus,
-            IEmailSender emailSender,
-            IEscalationManager escalationManager,
-            IMapper mapper)
+            IMapper mapper
+        )
         {
             _vacationDatabase = vacationDatabase;
-            _messageBus = messageBus;
-            _emailSender = emailSender;
-            _escalationManager = escalationManager;
             _mapper = mapper;
         }
 

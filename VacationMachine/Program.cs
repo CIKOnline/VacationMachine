@@ -6,26 +6,29 @@ namespace VacationMachine
     {
         private static void Main()
         {
-            var vacationDatabase = new VacationDatabase();
-            var messageBus = new MessageBus();
-            var emailSender = new EmailSender();
-            var escalationManager = new EscalationManager();
-
-            var vacationService = new VacationService(
-                vacationDatabase,
-                messageBus,
-                emailSender,
-                escalationManager,
-                new Mapper(vacationDatabase,
-                messageBus,
-                emailSender,
-                escalationManager)
-            );
+            VacationService vacationService = CreateVacationService();
 
             var result = vacationService.RequestPaidDaysOff(3, 1);
 
             Console.WriteLine($"Vacation is: {result}");
             Console.ReadKey();
+        }
+
+        private static VacationService CreateVacationService()
+        {
+            var vacationDatabase = new VacationDatabase();
+
+            var mapper = new Mapper(
+                vacationDatabase,
+                new MessageBus(),
+                new EmailSender(),
+                new EscalationManager()
+            );
+
+            return new VacationService(
+                vacationDatabase,
+                mapper
+            );
         }
     }
 }

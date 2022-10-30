@@ -1,15 +1,8 @@
 ﻿namespace VacationMachine
 {
-    public class Configuration
+    public static class Configuration
     {
-        public int GetMaxDaysForPerformers()
-        {
-            return 45;
-        }
-
-        public int GetMaxDays()
-        {
-            return 26;
-        }
+        public const int MAX_DAYS_FOR_PERFORMERS = 45;
+        public const int MAX_DAYS = 26;
     }
 }
