@@ -6,7 +6,7 @@
         {
             return new Employee
             {
-                Status = "SLACKER",
+                Status = EmployeeStatus.Slacker,
                 DaysSoFar = 1
             };
         }

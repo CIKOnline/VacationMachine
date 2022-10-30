@@ -34,7 +34,7 @@ namespace VacationMachine
 
             if (employee.DaysSoFar + days > 26)
             {
-                if (employee.Status.Equals("PERFORMER") && employee.DaysSoFar + days < 45)
+                if (employee.Status.Equals(EmployeeStatus.Performer) && employee.DaysSoFar + days < 45)
                 {
                     result = Result.Manual;
                     _escalationManager.NotifyNewPendingRequest(employeeId);
@@ -47,7 +47,7 @@ namespace VacationMachine
             }
             else
             {
-                if (employee.Status.Equals("SLACKER"))
+                if (employee.Status.Equals(EmployeeStatus.Slacker))
                 {
                     result = Result.Denied;
                     _emailSender.Send("next time");

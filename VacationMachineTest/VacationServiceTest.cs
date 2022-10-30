@@ -89,7 +89,7 @@ namespace VacationMachineTest
             {
                 return new Employee
                 {
-                    Status = "PERFORMER",
+                    Status = EmployeeStatus.Performer,
                     DaysSoFar = 0
                 };
             });
