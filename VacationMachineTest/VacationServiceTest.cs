@@ -130,14 +130,29 @@ namespace VacationMachineTest
             _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
         }
 
-        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days, EmployeeStatus employeeStatus)
+        [Test]
+        [TestCase(17, 10)]
+        [TestCase(18, 10)]
+        [TestCase(1, 30)]
+        public void RequestPaidDaysOff_WhenDaysSoFarPlusRequestedDaysToHeigh_ThenDenied(int days, int daysSoFar)
+        {
+            var expectedResult = Result.Denied;
+
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Regular, daysSoFar);
+            _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
+            _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
+            _emailSender.Received(1).Send("next time");
+            _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
+        }
+
+        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days, EmployeeStatus employeeStatus, int daysSoFar = 0)
         {
             _vacationDatabase.FindByEmployeeId(EMPLOYEE_ID).Returns(callInfo =>
             {
                 return new Employee
                 {
                     Status = employeeStatus,
-                    DaysSoFar = 0
+                    DaysSoFar = daysSoFar
                 };
             });
 
