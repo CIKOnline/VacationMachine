@@ -29,7 +29,7 @@ namespace VacationMachine
             }
         }
 
-        protected string RequestPaidDaysOff(int days, Business.Employee employee)
+        private string RequestPaidDaysOff(int days, Business.Employee employee)
         {
             var requestResult = employee.RequestPaidDaysOff(days);
             requestResult.ProcessRequest();
