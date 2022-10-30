@@ -25,6 +25,11 @@ namespace VacationMachine
         {
             var vacationRequest = employee.RequestPaidDaysOff(days);
 
+            return RequestPaidDaysOff(vacationRequest);
+        }
+
+        private string RequestPaidDaysOff(IVacationRequest vacationRequest)
+        {
             vacationRequest.ProcessRequest();
 
             if (vacationRequest.IsEmployeeUpdated)
