@@ -49,7 +49,7 @@ namespace VacationMachineTest
         {
             var expectedResult = Result.Approved;
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Performer);
             _vacationDatabase.ReceivedWithAnyArgs(1).Save(default);
             _messageBus.Received(1).SendEvent("request approved");
             _emailSender.DidNotReceiveWithAnyArgs().Send(default);
@@ -62,7 +62,7 @@ namespace VacationMachineTest
         {
             var expectedResult = Result.Manual;
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Performer);
             _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
             _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
             _emailSender.DidNotReceiveWithAnyArgs().Send(default);
@@ -76,20 +76,67 @@ namespace VacationMachineTest
         {
             var expectedResult = Result.Denied;
 
-            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days);
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Performer);
             _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
             _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
             _emailSender.Received(1).Send("next time");
             _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
         }
 
-        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days)
+        [Test]
+        [TestCaseSource(nameof(GetDaysFromTo), new object[] { 1, 26 })]
+        public void RequestPaidDaysOff_WhenRegularAndDaysInAcceptedRange_ThenApproved(int days)
+        {
+            var expectedResult = Result.Approved;
+
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Regular);
+            _vacationDatabase.ReceivedWithAnyArgs(1).Save(default);
+            _messageBus.Received(1).SendEvent("request approved");
+            _emailSender.DidNotReceiveWithAnyArgs().Send(default);
+            _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
+        }
+
+        [Test]
+        [TestCase(27)]
+        [TestCase(28)]
+        [TestCase(45)]
+        [TestCase(46)]
+        public void RequestPaidDaysOff_WhenRegularAndDaysAboveAcceptedRange_ThenDenied(int days)
+        {
+            var expectedResult = Result.Denied;
+
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Regular);
+            _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
+            _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
+            _emailSender.Received(1).Send("next time");
+            _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(27)]
+        [TestCase(28)]
+        [TestCase(45)]
+        [TestCase(46)]
+        public void RequestPaidDaysOff_WhenSlackerAndAnyDaysRequested_ThenDenied(int days)
+        {
+            var expectedResult = Result.Denied;
+
+            RequestPaidDaysOff_ReturnsExpectedResultForDays(expectedResult, days, EmployeeStatus.Slacker);
+            _vacationDatabase.DidNotReceiveWithAnyArgs().Save(default);
+            _messageBus.DidNotReceiveWithAnyArgs().SendEvent(default);
+            _emailSender.Received(1).Send("next time");
+            _escalationManager.DidNotReceiveWithAnyArgs().NotifyNewPendingRequest(default);
+        }
+
+        private void RequestPaidDaysOff_ReturnsExpectedResultForDays(Result expectedResult, int days, EmployeeStatus employeeStatus)
         {
             _vacationDatabase.FindByEmployeeId(EMPLOYEE_ID).Returns(callInfo =>
             {
                 return new Employee
                 {
-                    Status = EmployeeStatus.Performer,
+                    Status = employeeStatus,
                     DaysSoFar = 0
                 };
             });
