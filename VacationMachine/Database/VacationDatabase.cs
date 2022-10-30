@@ -1,24 +1,16 @@
-﻿namespace VacationMachine
+﻿using VacationMachine.Domain;
+
+namespace VacationMachine
 {
     public class VacationDatabase : IVacationDatabase
     {
-        private readonly IEmailSender _emailSender;
-
-        public VacationDatabase(
-            IEmailSender emailSender
-        )
-        {
-            _emailSender = emailSender;
-        }
-
         public Employee FindByEmployeeId(long employeeId)
         {
-            return new SlackerEmployee(
-                _emailSender
-            )
+            return new Employee()
             {
                 EmployeeId = employeeId,
-                DaysSoFar = 1
+                DaysSoFar = 1,
+                Status = EmployeeStatus.Slacker
             };
         }
 

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using VacationMachine;
+using VacationMachine.Business;
 
 namespace VacationMachineTest
 {
@@ -18,6 +19,7 @@ namespace VacationMachineTest
         private IMessageBus _messageBus;
         private IEmailSender _emailSender;
         private IEscalationManager _escalationManager;
+        private IMapper _mapper;
 
         [SetUp]
         public void Initialize()
@@ -26,9 +28,14 @@ namespace VacationMachineTest
             _messageBus = Substitute.For<IMessageBus>();
             _emailSender = Substitute.For<IEmailSender>();
             _escalationManager = Substitute.For<IEscalationManager>();
+            _mapper = Substitute.For<IMapper>();
 
             _sut = new VacationServiceFake(
-                _vacationDatabase
+                _vacationDatabase,
+                _messageBus,
+                _emailSender,
+                _escalationManager,
+                _mapper
             );
         }
 
@@ -154,7 +161,7 @@ namespace VacationMachineTest
 
         private PerformerEmployee CreatePerformerEmployee(int daysSoFar = 0)
         {
-            return new PerformerEmployee(_vacationDatabase, _messageBus, _emailSender, _escalationManager)
+            return new PerformerEmployee(_vacationDatabase, _mapper, _messageBus, _emailSender, _escalationManager)
             {
                 EmployeeId = EMPLOYEE_ID,
                 DaysSoFar = daysSoFar
@@ -163,7 +170,7 @@ namespace VacationMachineTest
 
         private RegularEmployee CreateRegularEmployee(int daysSoFar = 0)
         {
-            return new RegularEmployee(_vacationDatabase, _messageBus, _emailSender)
+            return new RegularEmployee(_vacationDatabase, _mapper, _messageBus, _emailSender)
             {
                 EmployeeId = EMPLOYEE_ID,
                 DaysSoFar = daysSoFar
@@ -197,8 +204,12 @@ namespace VacationMachineTest
         private class VacationServiceFake : VacationService
         {
             public VacationServiceFake(
-                IVacationDatabase database
-            ) : base(database)
+                IVacationDatabase vacationDatabase,
+                IMessageBus messageBus,
+                IEmailSender emailSender,
+                IEscalationManager escalationManager,
+                IMapper mapper
+            ) : base(vacationDatabase, messageBus, emailSender, escalationManager, mapper)
             {
             }
 

@@ -1,4 +1,6 @@
-﻿namespace VacationMachine
+﻿using VacationMachine.Domain;
+
+namespace VacationMachine
 {
     public interface IVacationDatabase
     {

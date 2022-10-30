@@ -1,7 +1,11 @@
-﻿namespace VacationMachine
+﻿using VacationMachine.Domain;
+
+namespace VacationMachine.Business
 {
     public class SlackerEmployee : Employee
     {
+        public override EmployeeStatus Status => EmployeeStatus.Slacker;
+
         private readonly IEmailSender _emailSender;
 
         public SlackerEmployee(
