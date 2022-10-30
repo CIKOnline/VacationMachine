@@ -39,37 +39,50 @@ namespace VacationMachine
                     var newDaysSoFar = employee.DaysSoFar + days;
                     if (newDaysSoFar <= 26)
                     {
-                        employee.DaysSoFar += days;
-                        _vacationDatabase.Save(employee);
-                        _messageBus.SendEvent("request approved");
+                        ApprovePaidDaysOff(days, employee);
                         return Result.Approved;
                     }
                     else if (newDaysSoFar < 45)
                     {
-                        _escalationManager.NotifyNewPendingRequest(employee.EmployeeId);
+                        ManualPaidDaysOff(employee);
                         return Result.Manual;
                     }
-                    _emailSender.Send("next time");
-                    return Result.Denied;
+                    break;
 
                 case EmployeeStatus.Regular:
-                    if (employee.DaysSoFar + days > 26)
+                    if (employee.DaysSoFar + days <= 26)
                     {
-                        _emailSender.Send("next time");
-                        return Result.Denied;
+                        ApprovePaidDaysOff(days, employee);
+                        return Result.Approved;
                     }
-                    employee.DaysSoFar += days;
-                    _vacationDatabase.Save(employee);
-                    _messageBus.SendEvent("request approved");
-                    return Result.Approved;
+                    break;
 
                 case EmployeeStatus.Slacker:
-                    _emailSender.Send("next time");
-                    return Result.Denied;
+                    break;
 
                 default:
                     throw new NotImplementedException(nameof(employee.Status));
             }
+
+            DeniePaidDaysOff();
+            return Result.Denied;
+        }
+
+        private void ManualPaidDaysOff(Employee employee)
+        {
+            _escalationManager.NotifyNewPendingRequest(employee.EmployeeId);
+        }
+
+        private void DeniePaidDaysOff()
+        {
+            _emailSender.Send("next time");
+        }
+
+        private void ApprovePaidDaysOff(int days, Employee employee)
+        {
+            employee.DaysSoFar += days;
+            _vacationDatabase.Save(employee);
+            _messageBus.SendEvent("request approved");
         }
 
         protected void ValidateRequestedDays(int days)
