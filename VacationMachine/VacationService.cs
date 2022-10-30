@@ -33,33 +33,42 @@ namespace VacationMachine
         {
             ValidateRequestedDays(days);
 
-            if (employee.DaysSoFar + days > 26)
+            switch (employee.Status)
             {
-                if (employee.Status.Equals(EmployeeStatus.Performer) && employee.DaysSoFar + days < 45)
-                {
-                    _escalationManager.NotifyNewPendingRequest(employee.EmployeeId);
-                    return Result.Manual;
-                }
-                else
-                {
+                case EmployeeStatus.Performer:
+                    var newDaysSoFar = employee.DaysSoFar + days;
+                    if (newDaysSoFar <= 26)
+                    {
+                        employee.DaysSoFar += days;
+                        _vacationDatabase.Save(employee);
+                        _messageBus.SendEvent("request approved");
+                        return Result.Approved;
+                    }
+                    else if (newDaysSoFar < 45)
+                    {
+                        _escalationManager.NotifyNewPendingRequest(employee.EmployeeId);
+                        return Result.Manual;
+                    }
                     _emailSender.Send("next time");
                     return Result.Denied;
-                }
-            }
-            else
-            {
-                if (employee.Status.Equals(EmployeeStatus.Slacker))
-                {
-                    _emailSender.Send("next time");
-                    return Result.Denied;
-                }
-                else
-                {
+
+                case EmployeeStatus.Regular:
+                    if (employee.DaysSoFar + days > 26)
+                    {
+                        _emailSender.Send("next time");
+                        return Result.Denied;
+                    }
                     employee.DaysSoFar += days;
                     _vacationDatabase.Save(employee);
                     _messageBus.SendEvent("request approved");
                     return Result.Approved;
-                }
+
+                case EmployeeStatus.Slacker:
+                    _emailSender.Send("next time");
+                    return Result.Denied;
+
+                default:
+                    throw new NotImplementedException(nameof(employee.Status));
             }
         }
 
