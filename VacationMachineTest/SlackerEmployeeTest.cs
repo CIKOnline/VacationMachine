@@ -3,12 +3,10 @@ using NUnit.Framework;
 using VacationMachine;
 using VacationMachine.Business;
 
-namespace VacationMachineTest.Business
+namespace VacationMachineTest
 {
     public class SlackerEmployeeTest
     {
-        private const int EMPLOYEE_ID = 1;
-
         private IEmailSender _emailSender;
         private SlackerEmployee _sut;
 
