@@ -4,13 +4,28 @@ namespace VacationMachine
 {
     public class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
-            VacationService service = new VacationService(new VacationDatabase(), new MessageBus(), new EmailSender(), new EscalationManager());
-            var result = service.RequestPaidDaysOff(3, 1);
+            VacationService vacationService = CreateVacationService();
 
-            Console.WriteLine($"Vacation is :{result}");
+            var result = vacationService.RequestPaidDaysOff(3, 1);
+
+            Console.WriteLine($"Vacation is: {result}");
             Console.ReadKey();
+        }
+
+        private static VacationService CreateVacationService()
+        {
+            var employeeManager = new EmployeeManager(
+                new VacationDatabase(),
+                new EmployeeMapper(
+                    new MessageBus(),
+                    new EmailSender(),
+                    new EscalationManager()
+                )
+            );
+
+            return new VacationService(employeeManager);
         }
     }
 }

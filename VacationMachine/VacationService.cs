@@ -1,65 +1,51 @@
 ﻿using System;
+using VacationMachine.Business;
 
 namespace VacationMachine
 {
     public class VacationService
     {
-        private readonly IVacationDatabase _database;
-        private readonly IMessageBus _messageBus;
-        private readonly IEmailSender _emailSender;
-        private readonly IEscalationManager _escalationManager;
+        private readonly IEmployeeManager _employeeManager;
 
-        public VacationService(IVacationDatabase database, IMessageBus messageBus, IEmailSender emailSender,
-            IEscalationManager escalationManager)
+        public VacationService(IEmployeeManager employeeManager)
         {
-            _database = database;
-            _messageBus = messageBus;
-            _emailSender = emailSender;
-            _escalationManager = escalationManager;
+            _employeeManager = employeeManager;
         }
 
-        public Result RequestPaidDaysOff(int days, long employeeId)
+        public string RequestPaidDaysOff(int days, long employeeId)
         {
-            if (days < 0)
+            ValidateRequestedDays(days);
+
+            Employee employee = _employeeManager.FindByEmployeeId(employeeId);
+
+            return RequestPaidDaysOff(days, employee);
+        }
+
+        private string RequestPaidDaysOff(int days, Employee employee)
+        {
+            var vacationRequest = employee.RequestPaidDaysOff(days);
+
+            return RequestPaidDaysOff(vacationRequest);
+        }
+
+        private string RequestPaidDaysOff(IVacationRequest vacationRequest)
+        {
+            vacationRequest.ProcessRequest();
+
+            if (vacationRequest.IsEmployeeUpdated)
             {
-                throw new ArgumentException();
+                _employeeManager.SaveEmployee(vacationRequest.Employee);
             }
 
-            Result result;
-            var employeeData = _database.FindByEmployeeId(employeeId);
-            var employeeStatus = (string)employeeData[0];
-            var daysSoFar = (int)employeeData[1];
+            return vacationRequest.StatusMessage;
+        }
 
-            if (daysSoFar + days > 26)
+        protected void ValidateRequestedDays(int days)
+        {
+            if (days <= 0)
             {
-                if (employeeStatus.Equals("PERFORMER") && daysSoFar + days < 45)
-                {
-                    result = Result.Manual;
-                    _escalationManager.NotifyNewPendingRequest(employeeId);
-                }
-                else
-                {
-                    result = Result.Denied;
-                    _emailSender.Send("next time");
-                }
+                throw new ArgumentException($"Invalid amount of days: {days}");
             }
-            else
-            {
-                if (employeeStatus.Equals("SLACKER"))
-                {
-                    result = Result.Denied;
-                    _emailSender.Send("next time");
-                }
-                else
-                {
-                    employeeData[1] = daysSoFar + days;
-                    result = Result.Approved;
-                    _database.Save(employeeData);
-                    _messageBus.SendEvent("request approved");
-                }
-            }
-
-            return result;
         }
     }
 }

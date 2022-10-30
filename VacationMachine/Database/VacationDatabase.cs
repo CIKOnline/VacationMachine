@@ -1,15 +1,21 @@
-﻿namespace VacationMachine
+﻿using VacationMachine.Domain;
+
+namespace VacationMachine
 {
     public class VacationDatabase : IVacationDatabase
     {
-        public object[] FindByEmployeeId(long employeeId)
+        public Employee FindByEmployeeId(long employeeId)
         {
-            return new object[] { "SLACKER", 1 };
+            return new Employee()
+            {
+                EmployeeId = employeeId,
+                DaysSoFar = 1,
+                Status = EmployeeRole.Slacker
+            };
         }
 
-        public void Save(object[] employeeData)
+        public void Save(Employee employeeData)
         {
-
         }
     }
 }
