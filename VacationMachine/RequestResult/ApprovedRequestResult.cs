@@ -18,7 +18,7 @@ namespace VacationMachine
             this.days = days;
         }
 
-        public string StatusMessage => "Approved";
+        public string StatusMessage => Configuration.STATUS_MESSAGE_APPROVED;
 
         public bool IsEmployeeChanged { get; private set; } = false;
 

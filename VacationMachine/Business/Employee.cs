@@ -4,7 +4,7 @@ namespace VacationMachine.Business
 {
     public abstract class Employee
     {
-        public abstract EmployeeStatus Status { get; }
+        public abstract EmployeeRole Role { get; }
         public long EmployeeId { get; set; }
         public int DaysSoFar { get; set; }
 

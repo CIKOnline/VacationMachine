@@ -4,6 +4,6 @@
     {
         public long EmployeeId { get; set; }
         public int DaysSoFar { get; set; }
-        public EmployeeStatus Status { get; set; }
+        public EmployeeRole Status { get; set; }
     }
 }

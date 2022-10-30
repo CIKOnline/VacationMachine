@@ -5,11 +5,11 @@ namespace VacationMachine
     public class VacationService
     {
         private readonly IVacationDatabase _vacationDatabase;
-        private readonly IMapper _mapper;
+        private readonly IEmployeeMapper _mapper;
 
         public VacationService(
             IVacationDatabase vacationDatabase,
-            IMapper mapper
+            IEmployeeMapper mapper
         )
         {
             _vacationDatabase = vacationDatabase;

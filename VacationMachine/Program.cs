@@ -16,18 +16,13 @@ namespace VacationMachine
 
         private static VacationService CreateVacationService()
         {
-            var vacationDatabase = new VacationDatabase();
-
-            var mapper = new Mapper(
-                vacationDatabase,
-                new MessageBus(),
-                new EmailSender(),
-                new EscalationManager()
-            );
-
             return new VacationService(
-                vacationDatabase,
-                mapper
+                new VacationDatabase(),
+                new EmployeeMapper(
+                    new MessageBus(),
+                    new EmailSender(),
+                    new EscalationManager()
+                )
             );
         }
     }

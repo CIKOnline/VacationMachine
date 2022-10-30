@@ -1,6 +1,6 @@
 ﻿namespace VacationMachine
 {
-    public interface IMapper
+    public interface IEmployeeMapper
     {
         public Domain.Employee ToDomain(Business.Employee businessEmployee);
 

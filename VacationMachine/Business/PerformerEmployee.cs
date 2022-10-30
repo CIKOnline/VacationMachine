@@ -4,7 +4,7 @@ namespace VacationMachine.Business
 {
     public class PerformerEmployee : Employee
     {
-        public override EmployeeStatus Status => EmployeeStatus.Performer;
+        public override EmployeeRole Role => EmployeeRole.Performer;
 
         private readonly IMessageBus _messageBus;
         private readonly IEmailSender _emailSender;

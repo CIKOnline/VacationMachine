@@ -15,7 +15,7 @@ namespace VacationMachine
             _emailSender = emailSender;
         }
 
-        public string StatusMessage => "Denied";
+        public string StatusMessage => Configuration.STATUS_MESSAGE_DENIED;
 
         public Employee Employee { get; private set; }
 

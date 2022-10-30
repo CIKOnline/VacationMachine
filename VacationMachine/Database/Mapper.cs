@@ -4,20 +4,18 @@ using VacationMachine.Domain;
 
 namespace VacationMachine
 {
-    public class Mapper : IMapper
+    public class EmployeeMapper : IEmployeeMapper
     {
-        private readonly IVacationDatabase _vacationDatabase;
         private readonly IMessageBus _messageBus;
         private readonly IEmailSender _emailSender;
         private readonly IEscalationManager _escalationManager;
 
-        public Mapper(
-            IVacationDatabase vacationDatabase,
+        public EmployeeMapper(
             IMessageBus messageBus,
             IEmailSender emailSender,
-            IEscalationManager escalationManager)
+            IEscalationManager escalationManager
+        )
         {
-            _vacationDatabase = vacationDatabase;
             _messageBus = messageBus;
             _emailSender = emailSender;
             _escalationManager = escalationManager;
@@ -29,42 +27,28 @@ namespace VacationMachine
             {
                 EmployeeId = businessEmployee.EmployeeId,
                 DaysSoFar = businessEmployee.DaysSoFar,
-                Status = businessEmployee.Status
+                Status = businessEmployee.Role
             };
         }
 
         public Business.Employee ToBusiness(Domain.Employee domainEmployee)
         {
-            Business.Employee businessEmployee;
-
-            switch (domainEmployee.Status)
+            Business.Employee businessEmployee = domainEmployee.Status switch
             {
-                case EmployeeStatus.Performer:
-                    businessEmployee = new PerformerEmployee(
-                        _messageBus,
-                        _emailSender,
-                        _escalationManager
-                    );
-                    break;
-
-                case EmployeeStatus.Regular:
-                    businessEmployee = new RegularEmployee(
-                        _vacationDatabase,
-                        this,
-                        _messageBus,
-                        _emailSender
-                    );
-                    break;
-
-                case EmployeeStatus.Slacker:
-                    businessEmployee = new SlackerEmployee(
-                        _emailSender
-                    );
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+                EmployeeRole.Performer => new PerformerEmployee(
+                    _messageBus,
+                    _emailSender,
+                    _escalationManager
+                ),
+                EmployeeRole.Regular => new RegularEmployee(
+                    _messageBus,
+                    _emailSender
+                ),
+                EmployeeRole.Slacker => new SlackerEmployee(
+                    _emailSender
+                ),
+                _ => throw new NotImplementedException(),
+            };
 
             businessEmployee.EmployeeId = domainEmployee.EmployeeId;
             businessEmployee.DaysSoFar = domainEmployee.DaysSoFar;

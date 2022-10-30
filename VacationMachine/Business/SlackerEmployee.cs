@@ -4,7 +4,7 @@ namespace VacationMachine.Business
 {
     public class SlackerEmployee : Employee
     {
-        public override EmployeeStatus Status => EmployeeStatus.Slacker;
+        public override EmployeeRole Role => EmployeeRole.Slacker;
 
         private readonly IEmailSender _emailSender;
 

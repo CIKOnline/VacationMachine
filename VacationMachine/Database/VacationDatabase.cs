@@ -10,7 +10,7 @@ namespace VacationMachine
             {
                 EmployeeId = employeeId,
                 DaysSoFar = 1,
-                Status = EmployeeStatus.Slacker
+                Status = EmployeeRole.Slacker
             };
         }
 

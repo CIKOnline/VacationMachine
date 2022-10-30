@@ -15,7 +15,7 @@ namespace VacationMachine
             _escalationManager = escalationManager;
         }
 
-        public string StatusMessage => "Manual";
+        public string StatusMessage => Configuration.STATUS_MESSAGE_MANUAL;
 
         public Employee Employee { get; private set; }
 

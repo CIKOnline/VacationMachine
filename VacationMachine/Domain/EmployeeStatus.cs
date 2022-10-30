@@ -1,6 +1,6 @@
 ﻿namespace VacationMachine.Domain
 {
-    public enum EmployeeStatus
+    public enum EmployeeRole
     {
         Performer,
         Regular,
