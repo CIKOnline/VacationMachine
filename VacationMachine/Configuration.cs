@@ -1,15 +1,27 @@
-﻿namespace VacationMachine
+﻿using System;
+
+namespace VacationMachine
 {
     public class Configuration
     {
-        public int GetMaxDaysForPerformers()
+        public static int GetMaxDaysForPerformers()
         {
             return 45;
         }
 
-        public int GetMaxDays()
+        public static int GetMaxDays()
         {
             return 26;
+        }
+
+        public static string GetEmailText()
+        {
+            return "next time";
+        }
+
+        public static string GetEventText()
+        {
+            return "request approved";
         }
     }
 }
