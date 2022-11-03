@@ -1,0 +1,52 @@
+{
+  "version": 2,
+  "dgSpecHash": "shPzPa/qcJRwDdbbAyPtulcd2evPHC8VBiFnmP/qei1klQxMp+m17fr+jTx7B0y0V8EWSHFgvyy4pbjnFW/+bQ==",
+  "success": true,
+  "projectFilePath": "C:\\github\\gal\\VacationMachine.Services\\VacationMachine.Services.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0-rc.2.22472.3\\microsoft.bcl.asyncinterfaces.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.configuration\\7.0.0-rc.2.22472.3\\microsoft.extensions.configuration.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0-rc.2.22472.3\\microsoft.extensions.configuration.abstractions.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.configuration.binder\\7.0.0-rc.2.22472.3\\microsoft.extensions.configuration.binder.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.configuration.commandline\\7.0.0-rc.2.22472.3\\microsoft.extensions.configuration.commandline.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.configuration.environmentvariables\\7.0.0-rc.2.22472.3\\microsoft.extensions.configuration.environmentvariables.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\7.0.0-rc.2.22472.3\\microsoft.extensions.configuration.fileextensions.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.configuration.json\\7.0.0-rc.2.22472.3\\microsoft.extensions.configuration.json.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.configuration.usersecrets\\7.0.0-rc.2.22472.3\\microsoft.extensions.configuration.usersecrets.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0-rc.2.22472.3\\microsoft.extensions.dependencyinjection.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0-rc.2.22472.3\\microsoft.extensions.dependencyinjection.abstractions.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\7.0.0-rc.2.22472.3\\microsoft.extensions.fileproviders.abstractions.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\7.0.0-rc.2.22472.3\\microsoft.extensions.fileproviders.physical.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\7.0.0-rc.2.22472.3\\microsoft.extensions.filesystemglobbing.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.hosting\\7.0.0-rc.2.22472.3\\microsoft.extensions.hosting.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.hosting.abstractions\\7.0.0-rc.2.22472.3\\microsoft.extensions.hosting.abstractions.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.logging\\7.0.0-rc.2.22472.3\\microsoft.extensions.logging.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.0-rc.2.22472.3\\microsoft.extensions.logging.abstractions.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.logging.configuration\\7.0.0-rc.2.22472.3\\microsoft.extensions.logging.configuration.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.logging.console\\7.0.0-rc.2.22472.3\\microsoft.extensions.logging.console.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.logging.debug\\7.0.0-rc.2.22472.3\\microsoft.extensions.logging.debug.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.logging.eventlog\\7.0.0-rc.2.22472.3\\microsoft.extensions.logging.eventlog.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.logging.eventsource\\7.0.0-rc.2.22472.3\\microsoft.extensions.logging.eventsource.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.options\\7.0.0-rc.2.22472.3\\microsoft.extensions.options.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\7.0.0-rc.2.22472.3\\microsoft.extensions.options.configurationextensions.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0-rc.2.22472.3\\microsoft.extensions.primitives.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.diagnostics.diagnosticsource\\7.0.0-rc.2.22472.3\\system.diagnostics.diagnosticsource.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.diagnostics.eventlog\\7.0.0-rc.2.22472.3\\system.diagnostics.eventlog.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.security.principal.windows\\5.0.0\\system.security.principal.windows.5.0.0.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.text.encodings.web\\7.0.0-rc.2.22472.3\\system.text.encodings.web.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.text.json\\7.0.0-rc.2.22472.3\\system.text.json.7.0.0-rc.2.22472.3.nupkg.sha512",
+    "C:\\Users\\gal\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1803",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "You are running the 'restore' operation with an 'HTTP' source, 'http://ocag-devapp01:8080/devops/Online-Group-Collection/_packaging/OC.EPM.Feed/nuget/v3/index.json'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source."
+    }
+  ]
+}

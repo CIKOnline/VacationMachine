@@ -1,8 +1,13 @@
 ﻿using System;
+using VacationMachine.Repository.Database;
+using VacationMachine.Services.Email;
+using VacationMachine.Services.Escalation;
+using VacationMachine.Services.MessageBus;
+using VacationMachine.Services.Models;
 
-namespace VacationMachine
+namespace VacationMachine.Services
 {
-    public class VacationService
+    public class VacationService : IVacationService
     {
         private readonly IVacationDatabase _database;
         private readonly IMessageBus _messageBus;

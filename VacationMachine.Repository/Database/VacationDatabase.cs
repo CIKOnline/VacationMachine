@@ -1,4 +1,4 @@
-﻿namespace VacationMachine
+﻿namespace VacationMachine.Repository.Database
 {
     public class VacationDatabase : IVacationDatabase
     {
@@ -9,7 +9,6 @@
 
         public void Save(object[] employeeData)
         {
-
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace VacationMachine
+﻿namespace VacationMachine.Repository.Database
 {
     public interface IVacationDatabase
     {
