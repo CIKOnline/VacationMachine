@@ -1,4 +1,4 @@
-﻿namespace VacationMachine
+﻿namespace VacationMachine.Services.Configurations
 {
     public class Configuration
     {

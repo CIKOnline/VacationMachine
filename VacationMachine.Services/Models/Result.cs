@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VacationMachine
+namespace VacationMachine.Services.Models
 {
     public enum Result
     {

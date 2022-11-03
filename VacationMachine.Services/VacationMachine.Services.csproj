@@ -1,20 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove=".gitignore" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0-rc.2.22472.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VacationMachine.Services\VacationMachine.Services.csproj" />
+    <ProjectReference Include="..\VacationMachine.Repository\VacationMachine.Repository.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace VacationMachine
+﻿namespace VacationMachine.Services.MessageBus
 {
     public class MessageBus : IMessageBus
     {

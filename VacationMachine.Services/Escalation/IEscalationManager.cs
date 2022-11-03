@@ -1,4 +1,4 @@
-﻿namespace VacationMachine
+﻿namespace VacationMachine.Services.Escalation
 {
     public interface IEscalationManager
     {
